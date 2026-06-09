@@ -150,7 +150,40 @@ button, input, textarea { font: inherit; }
   background: rgba(229, 53, 42, 0.28);
 }
 
-.mobile-nav-toggle { display: none; }
+.mobile-nav-toggle {
+  display: none;
+  position: relative;
+  width: 44px;
+  height: 42px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.055);
+  cursor: pointer;
+}
+
+.mobile-nav-toggle span,
+.mobile-nav-toggle::before,
+.mobile-nav-toggle::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: block;
+  width: 18px;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.mobile-nav-toggle span {
+  transform: translate(-50%, -50%);
+}
+
+.mobile-nav-toggle::before { transform: translate(-50%, calc(-50% - 6px)); }
+.mobile-nav-toggle::after { transform: translate(-50%, calc(-50% + 6px)); }
 
 .hero {
   position: relative;
@@ -566,16 +599,114 @@ p {
   .footer-links { justify-content: flex-start; }
 }
 
+@media (max-width: 760px) {
+  body.nav-locked { overflow: hidden; }
+  .site-header { position: sticky; }
+  .nav {
+    min-height: 64px;
+    align-items: center;
+    padding: 10px 0;
+    gap: 12px;
+  }
+  .brand {
+    min-width: 0;
+    letter-spacing: 0.04em;
+  }
+  .brand-name {
+    max-width: calc(100vw - 116px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.84rem;
+  }
+  .mobile-nav-toggle {
+    display: inline-flex;
+    margin-left: auto;
+  }
+  .nav-right {
+    display: none;
+    width: 100%;
+    align-items: stretch;
+    gap: 14px;
+    padding: 12px 0 6px;
+  }
+  .site-header.nav-open .nav-right {
+    display: flex;
+    flex-direction: column;
+  }
+  .nav-links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    max-width: none;
+    width: 100%;
+  }
+  .nav-links a {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: rgba(255, 255, 255, 0.045);
+  }
+  .lang-switcher {
+    align-self: flex-start;
+  }
+}
+
 @media (max-width: 640px) {
   .wrap { width: min(100% - 24px, var(--max)); }
-  .hero { padding-top: 56px; }
-  .hero h1 { font-size: clamp(3rem, 16vw, 4.6rem); }
-  .hero-visual { min-height: 440px; }
-  .phone { width: 50%; }
-  .phone-main { left: 4%; }
-  .phone-side { right: 0; }
-  .helmet-float { width: 44%; }
-  .telemetry-card { width: 72%; padding: 14px; }
+  .hero { padding: 44px 0 40px; }
+  .hero-grid { gap: 30px; }
+  .hero h1 {
+    font-size: clamp(2.65rem, 14vw, 4.4rem);
+    line-height: 0.96;
+  }
+  .hero-position { font-size: 1.08rem; line-height: 1.45; }
+  .hero-subtitle { font-size: 1rem; line-height: 1.65; }
+  .hero-visual {
+    min-height: auto;
+    aspect-ratio: 0.86;
+    max-height: 500px;
+  }
+  .phone { width: 52%; padding: 6px; border-radius: 22px; }
+  .phone img { border-radius: 16px; }
+  .phone-main { left: 2%; top: 0; }
+  .phone-side { right: 0; top: 50px; }
+  .helmet-float {
+    width: 42%;
+    left: 0;
+    bottom: 16px;
+    padding: 8px;
+  }
+  .telemetry-card {
+    width: 70%;
+    right: 0;
+    bottom: 0;
+    padding: 12px;
+    font-size: 0.88rem;
+  }
+  .telemetry-row {
+    gap: 8px;
+    padding: 8px 0;
+  }
+  .section { padding: 44px 0; }
+  .page-hero { padding: 46px 0 22px; }
+  .section-heading { gap: 16px; margin-bottom: 20px; }
+  .section-heading h2,
+  .page-hero h1 {
+    font-size: clamp(1.8rem, 9vw, 2.65rem);
+    line-height: 1.08;
+  }
+  .cta-row { gap: 10px; margin-top: 24px; }
+  .btn {
+    width: 100%;
+    min-height: 48px;
+    padding: 0 16px;
+    text-align: center;
+  }
+  .logo-strip .pill { max-width: 100%; }
   .grid-4,
   .grid-3,
   .grid-2 { grid-template-columns: 1fr; }
@@ -585,4 +716,19 @@ p {
   .post-card { padding: 20px; }
   .nav-links { font-size: 0.88rem; }
   .brand-parent { display: none; }
+}
+
+@media (max-width: 360px) {
+  .wrap { width: min(100% - 20px, var(--max)); }
+  .brand-mark { width: 30px; height: 30px; }
+  .brand-name { font-size: 0.78rem; max-width: calc(100vw - 104px); }
+  .nav-links { grid-template-columns: 1fr; }
+  .eyebrow,
+  .section-kicker,
+  .status-pill {
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+  }
+  .hero h1 { font-size: clamp(2.35rem, 13vw, 3.4rem); }
+  .telemetry-card { width: 78%; font-size: 0.82rem; }
 }

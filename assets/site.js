@@ -1,7 +1,27 @@
+/*
+ * Jax Max Delta website.
+ *
+ * Each HTML page is a small shell (static <head> metadata + <div id="app">).
+ * This file renders the page content in English, French or Spanish.
+ *
+ * Edit here:
+ *   SITE.store  - App Store / TestFlight links. Leave empty until the real URL
+ *                 exists; the site then shows a "Coming soon" state instead.
+ *   SHOTS       - Current app screenshots. Drop the file in
+ *                 assets/screenshots/current/ and set `file` to its name.
+ *                 Slots without a file render a styled placeholder.
+ *   copy        - All page text. English is the source; keep fr/es in step.
+ */
+
 const SITE = {
   contact: "support@jaxmaxdelta.com",
   baseUrl: "https://jaxmaxdelta.com",
   langs: ["en", "fr", "es"],
+  store: {
+    // Real, public URLs only - never a placeholder. Empty = "Coming soon".
+    appStoreUrl: "",
+    testFlightUrl: ""
+  },
   posts: [
     "second-screen-dashboard",
     "different-from-telemetry-app",
@@ -10,16 +30,28 @@ const SITE = {
   ]
 };
 
+// Screenshot slots. `file` is relative to assets/screenshots/current/ and may
+// also be an object per language, e.g. { en: "home-en.png", fr: "home-fr.png" }.
+// w/h default to an iPhone Pro Max capture (2868 x 1320) in the slot's orientation.
+const SHOTS = {
+  home:                { file: "", orientation: "landscape" },
+  prepare:             { file: "", orientation: "portrait" },
+  dashboard:           { file: "", orientation: "landscape" },
+  pitWallTiming:       { file: "", orientation: "landscape" },
+  pitWallMap:          { file: "", orientation: "landscape" },
+  pitWallGame:         { file: "", orientation: "landscape" },
+  sessionHistory:      { file: "", orientation: "portrait" },
+  raceResults:         { file: "", orientation: "portrait" },
+  raceReplayPortrait:  { file: "", orientation: "portrait" },
+  raceReplayLandscape: { file: "", orientation: "landscape" }
+};
+
 const copy = {
   en: {
-    meta: {
-      title: "Jax Max Delta - Virtual Pit Wall Crew for Sim Racers",
-      description: "Jax Max Delta turns your phone or tablet into race data, voice alerts, session memory, and virtual pit wall support for sim racers."
-    },
     nav: {
       home: "Home",
       features: "Features",
-      how: "How to Use",
+      how: "How It Works",
       support: "Support",
       blog: "Blog",
       roadmap: "Roadmap",
@@ -29,317 +61,456 @@ const copy = {
     common: {
       parent: "Camilore",
       app: "Jax Max Delta",
-      eyebrow: "Sim racing companion app",
-      ctaJoin: "Join TestFlight",
-      ctaTry: "Try Jax",
-      ctaFeatures: "View Features",
-      ctaHow: "Learn How It Works",
-      ctaBlog: "Read the Blog",
-      ctaSupport: "Contact Support",
-      placeholder: "Placeholder link - update when the final App Store or TestFlight URL is ready.",
+      eyebrow: "Sim racing companion for iPhone & iPad",
+      skip: "Skip to content",
+      menu: "Menu",
+      language: "Language",
+      storeSoon: "Coming soon on the App Store",
+      storeCta: "Download on the App Store",
+      testflightCta: "Join the TestFlight beta",
+      ctaFeatures: "Explore features",
+      ctaHow: "See how it works",
+      ctaSupport: "Contact support",
+      ctaPrivacy: "Read the privacy policy",
+      ctaReplay: "More about Race Replay",
+      shotSoon: "Current screenshot coming soon",
+      available: "Available now",
       disclaimer: "Jax Max Delta is an independent sim racing companion app and is not affiliated with or endorsed by EA, Codemasters, Formula 1, FIA, Microsoft, Sony, Fanatec, or any other referenced brand.",
-      footerLead: "Your virtual pit wall crew, personal race engineer, and racing journal.",
+      footerLead: "Your race engineer, your pit wall and your race memory — for F1 sim racers on iPhone and iPad.",
+      footerProduct: "Product",
+      footerHelp: "Help & legal",
       readPost: "Read post"
     },
+    shots: {
+      home: "Home",
+      prepare: "Prepare for Session",
+      dashboard: "Live Dashboard",
+      pitWallTiming: "Pit Wall — Timing",
+      pitWallMap: "Pit Wall — Map",
+      pitWallGame: "Pit Wall — Game",
+      sessionHistory: "Session History",
+      raceResults: "Race results",
+      raceReplayPortrait: "Race Replay",
+      raceReplayLandscape: "Race Replay"
+    },
     home: {
-      kicker: "Second screen. Voice alerts. Pit wall support.",
-      title: "Your virtual pit wall crew.",
-      position: "Jax Max Delta turns your phone or tablet into the race data, voice alerts, session memory, and strategy support your cockpit is missing.",
-      intro: "Race with more than a dashboard. Jax brings together live telemetry, race-engineer style voice alerts, session history, setup memory, and racing insights so you feel supported every lap.",
-      telemetry: [["Delta", "-0.284"], ["Tyres", "Medium 41%"], ["Fuel", "+1.8 laps"], ["Next alert", "Box window"]],
-      whoTitle: "Who Jax is for",
-      whoIntro: "Jax is built around real sim racing problems, especially on console rigs where the cockpit view and wheel can hide critical information.",
-      who: [
-        ["Wheel blocks the dash", "Run the data you need on a second screen without changing camera view."],
-        ["Console-first racers", "Designed for Xbox and PlayStation players using telemetry output from supported racing games."],
-        ["League racers", "Keep a history of sessions, setups, tyres, fuel, penalties, weather, and progress."],
-        ["Drivers chasing consistency", "Use session memory to find what worked on each track and improve over time."]
+      titleLines: ["Your race engineer.", "Your pit wall.", "Your race memory."],
+      lead: "Jax Max Delta turns live F1 telemetry into the information, coaching, race context and history you need — before, during and after every session.",
+      visualLabel: "Illustration of a lap trace across three sectors",
+      proof: ["iPhone & iPad", "EA SPORTS F1 24 · F1 25 · F1 26", "Local UDP telemetry", "PlayStation · Xbox · PC", "No account required", "English · Français · Español"],
+      phasesKicker: "Before · During · After",
+      phasesTitle: "One companion for the whole session.",
+      phasesIntro: "Jax Max Delta follows the full arc of a session: what to know before you leave the garage, what matters while you drive, and what actually happened once it's over.",
+      phases: [
+        ["Before", "Prepare", "Choose the circuit and car, then study the layout, corners, tyres, setup notes and your own history there.", "#prepare"],
+        ["During", "Race", "A live dashboard, Jax on the radio and a full pit wall — readable at a glance on your phone or tablet.", "#race"],
+        ["After", "Review", "Every session saved on your device: results, setups, conditions, lap traces — and a replay of how the race unfolded.", "#review"]
       ],
-      benefitsTitle: "Race with a team",
-      benefitsIntro: "From cockpit to pit wall to post-session review, Jax helps you race smarter and remember what worked.",
-      benefits: [
-        ["The team your cockpit is missing", "Critical race information stays visible on a phone or tablet when your wheel or cockpit blocks the game HUD."],
-        ["Your race engineer in your ear", "Voice alerts can call out tyres, fuel, deltas, penalties, and important session events without claiming to drive the strategy for you."],
-        ["Your team notebook", "Save notes, setups, compounds, and outcomes so every race weekend teaches the next one."]
-      ],
-      featuresTitle: "What Jax does",
-      featuresIntro: "Live dashboard, voice alerts, virtual pit wall context, session history, setup and tyre memory, and the tools to race smarter over time.",
-      pillars: [
-        ["Live Dashboard", "Race data on your phone or tablet when your wheel or cockpit blocks the in-game display."],
-        ["Jax Voice Alerts", "Race-engineer style alerts for the moments you should not have to look away from the track."],
-        ["Virtual Pit Wall Crew", "The missing team behind your cockpit: context, reminders, and support without claiming automated strategy."],
-        ["Session History", "A post-session record of laps, notes, events, and progress."],
-        ["Setup & Tyre Memory", "Remember what setup, compound, and stint choices worked on each track."],
-        ["Race Smarter Over Time", "Turn each session into knowledge you can use next race weekend."]
-      ],
-      earlyTitle: "Early access",
-      earlyBody: "Jax is moving through early access while the product grows from second-screen dashboard into a deeper race engineer and racing journal. TestFlight and App Store links are placeholders until final links are available.",
-      supportedTitle: "Supported games and platforms",
-      supportedBody: "Jax works with telemetry data from supported racing games. Current focus is EA SPORTS F1 titles with UDP telemetry on iPhone and iPad, including console setups on the same local network.",
-      quickLinksTitle: "Keep going",
-      quickLinks: [
-        ["Features", "Explore live dashboard, voice alerts, virtual pit wall support, setup tracking, tyres, fuel, penalties, flags, weather, and racing journal tools.", "features.html"],
-        ["How to Use", "Configure UDP telemetry, connect your phone or tablet, start a session, and troubleshoot common issues.", "how-to.html"],
-        ["Support", "FAQ, known issues, tester feedback, and contact information.", "support.html"],
-        ["Privacy", "Plain-language details on telemetry, on-device storage, iCloud Backup, and what never leaves your phone.", "privacy.html"]
-      ]
+      prepare: {
+        kicker: "Before · Prepare for Session",
+        title: "Know the circuit before you turn a wheel.",
+        body: "Prepare for Session brings circuit knowledge and your own history together. Choose the track and the car, then review what matters for the session ahead — practice, qualifying, sprint or race.",
+        items: [
+          "Interactive circuit map with numbered corners",
+          "Corner notes — gear, speed, braking and apex context where data exists",
+          "Pit lane, speed trap, DRS and energy-management context",
+          "Tyre and setup considerations for the chosen car",
+          "Race length, weather and Safety Car context",
+          "Your previous sessions and setups at that circuit"
+        ],
+        note: "Preparation data varies by circuit and car. JMD shows what it holds for the combination you choose, and tells you when something isn't available."
+      },
+      race: {
+        kicker: "During · Live Dashboard",
+        title: "Everything the cockpit hides, at a glance.",
+        body: "Set your iPhone or iPad beside the wheel and keep the numbers that matter in view — without changing camera or cluttering the game HUD.",
+        items: [
+          "Position, lap, speed, gear, throttle and brake",
+          "Lap, sector and delta timing",
+          "Tyre compound, wear and temperatures",
+          "Brake and engine temperatures",
+          "Fuel, ERS — including F1 26 energy management — and DRS",
+          "Flags, Safety Car, VSC, pit and penalty information",
+          "Wing damage, weather and session context"
+        ],
+        jaxKicker: "Jax · Voice",
+        jaxTitle: "Jax, on the radio.",
+        jaxBody: "Jax is your race engineer's voice: short, timely calls about what just changed, so your eyes stay on the track. Choose which categories you hear — and adjust them mid-session with Quick Jax from the Pit Wall.",
+        jaxItems: ["Tyres and fuel", "Lap times, delta and gaps", "Flags, Safety Car and VSC", "Penalties and race control", "Contextual reminders and coaching"],
+        jaxNote: "Jax informs and reminds. The driving — and the strategy calls — stay yours."
+      },
+      pitWall: {
+        kicker: "During · Pit Wall",
+        title: "The view from the pit wall.",
+        body: "When you need more than the dashboard, open the Pit Wall — one tap from the dashboard, or straight from the Home screen. The whole field, the whole circuit and your own car in one landscape view.",
+        items: [
+          "Live timing tower: positions, gaps, sectors and tyres",
+          "Live circuit map with every car",
+          "Your lap-by-lap table and car health",
+          "Lap traces with inputs, ERS and DRS, and lap comparison",
+          "Session setups and game/session configuration"
+        ]
+      },
+      replay: {
+        kicker: "After · Race Replay",
+        title: "Watch your race unfold again.",
+        body: "Race Replay rebuilds a race from the telemetry JMD captured and plays it back lap by lap: the timing tower reshuffling, gaps opening and closing, tyres changing, and the moments that decided it.",
+        items: [
+          "Timing tower with driver abbreviations, positions and gaps",
+          "Lap-by-lap progression with a race clock and replay controls",
+          "Tyre stints and pit stops across the field",
+          "Safety Car, VSC and red-flag periods",
+          "Retirements and a running race-event ticker",
+          "A reconstructed classification when the game sent no final results"
+        ],
+        note: "Race Replay works from the data your device received during the race. When the game sends no final classification, JMD rebuilds the result from captured timing if there is enough of it — it never invents what was never received.",
+        badge: "Races & sprint races"
+      },
+      history: {
+        kicker: "After · Session History",
+        title: "A racing journal that writes itself.",
+        body: "Completed sessions are saved on your device and reviewed according to what they were: practice and qualifying lead with pace, races tell the whole story.",
+        items: [
+          "Results and outcome — yours and the field's",
+          "Lap and sector times, tyres and stints",
+          "Setups used, with a setup library by circuit",
+          "Weather and session conditions",
+          "Penalties, highlights and race events",
+          "Saved lap traces to revisit your driving"
+        ],
+        note: "What a session contains depends on what the game sent. JMD fills gaps from captured data where it can, and shows missing data as missing."
+      },
+      privacy: {
+        kicker: "Your data",
+        title: "Private by design.",
+        body: "Jax Max Delta has no user accounts and asks for no personal information. Your telemetry travels only across your own network, and your history stays on your device.",
+        points: [
+          ["No account", "Nothing to sign up for, and no email collection."],
+          ["On your device", "Sessions, lap traces and setups live in the app's private storage."],
+          ["Your own iCloud", "If iCloud is available, session history can be backed up to your private iCloud container — which we cannot read."],
+          ["No ads, no tracking", "No advertising, no ad identifiers, no cross-app tracking."]
+        ]
+      },
+      platforms: {
+        kicker: "Compatibility",
+        title: "Built for console and PC F1 racers.",
+        body: "Jax Max Delta listens for the UDP telemetry your EA SPORTS F1 game sends over your local network. Your iPhone or iPad simply needs to be on the same network as your console or PC.",
+        groups: [
+          ["Games", ["EA SPORTS F1 24", "EA SPORTS F1 25", "EA SPORTS F1 26"]],
+          ["Race on", ["PlayStation", "Xbox", "PC"]],
+          ["Run JMD on", ["iPhone", "iPad"]]
+        ],
+        note: "Android is not available yet."
+      },
+      availability: {
+        kicker: "Availability",
+        soonTitle: "Coming soon to the App Store.",
+        liveTitle: "Available on the App Store.",
+        body: "Jax Max Delta is getting ready for its public release on iPhone and iPad. Questions or feedback in the meantime? We'd love to hear from you."
+      }
     },
     features: {
-      title: "Race with more than a dashboard.",
-      intro: "Jax Max Delta is your cockpit display, race-engineer voice alerts, virtual pit wall crew, and team notebook for sim racers who want useful information without losing focus.",
-      current: "Current and grounded",
-      future: "Future roadmap",
+      title: "Everything Jax Max Delta does today.",
+      intro: "A complete companion for F1 sim racers, organized around what you need before, during and after every session. Everything on this page is in the current release; future work is listed separately at the end.",
       groups: [
         {
+          id: "prepare",
+          phase: "Before",
+          title: "Prepare for Session",
+          body: "Choose a circuit and a car, then review the circuit and plan the session ahead. Circuit knowledge and your own history, side by side.",
+          items: [
+            "Circuit overview with an interactive, numbered circuit map",
+            "Corner-by-corner notes: gear, speed, braking and apex context where data exists",
+            "Pit lane, speed trap, DRS zones and energy-management context",
+            "Tyre and setup considerations for the selected car",
+            "Race length, weather and Safety Car / VSC context",
+            "Practice, qualifying and race guidance for the session you're planning",
+            "Your previous sessions and setups at that circuit"
+          ],
+          note: "Coverage varies by circuit and car; missing information is labelled rather than guessed.",
+          shots: ["prepare"]
+        },
+        {
+          id: "dashboard",
+          phase: "During",
           title: "Live Dashboard",
-          body: "Your full cockpit display on a second screen. Keep critical race data visible without changing camera view or cluttering your in-game HUD.",
+          body: "A landscape race display for your iPhone or iPad. Keep critical information visible without changing camera view or cluttering the in-game HUD.",
           items: [
-            "Speed, gear, throttle, and brake in real time",
-            "Tyre temperatures and wear for all four corners — with colour-coded heat warnings",
-            "Fuel laps remaining with surplus or deficit at a glance",
-            "Delta to leader or reference lap",
-            "Current, last, personal best, and session fastest lap times",
-            "Sector splits S1/S2/S3 per lap",
-            "Flag state, ERS and boost bar, and pit window"
+            "Position, lap, speed, gear, throttle and brake",
+            "Current, last and best laps, sector splits and delta",
+            "Tyre compound, wear and temperatures for all four corners",
+            "Brake and engine temperatures in your chosen unit",
+            "Fuel, ERS and F1 26 energy management, DRS",
+            "Flags, Safety Car, VSC, pit and penalty information",
+            "Wing damage, weather and session context"
           ],
-          screenshots: [
-            ["main_dash_yellow.png", "Yellow flag at Catalunya — full dashboard view"],
-            ["main_dash_hot_tyre.png", "Tyre heat warning — rear left running hot"]
-          ]
+          shots: ["dashboard"]
         },
         {
-          title: "Jax Voice Alerts",
-          body: "Your race engineer in your ear. Jax calls out the information you need at the moment you need it, without requiring you to look away from the track.",
+          id: "jax",
+          phase: "During",
+          title: "Jax — your race engineer's voice",
+          body: "Jax calls out what changed, when it matters, so you can keep your eyes on the track. Its calls are built from the telemetry itself — consistent and predictable, not improvised.",
           items: [
-            "Tyre temperature and wear alerts by corner",
-            "Fuel delta and strategy prompts",
-            "Lap delta and consistency callouts",
-            "Penalty and flag announcements",
-            "Safety Car and VSC entry and exit notifications",
-            "Pit window and session event reminders"
+            "Tyre state and fuel",
+            "Lap times, delta and gaps to the cars around you",
+            "Flags, Safety Car and VSC periods",
+            "Penalties and race-control events",
+            "Weather, energy management and strategy reminders",
+            "Choose categories and voice in Settings, or use Quick Jax from the Pit Wall mid-session"
           ],
-          screenshots: [
-            ["main_dash_green.png", "Green flag lap — race engineer voice layer active"]
-          ]
+          note: "Jax provides information and reminders. Driving decisions and strategy calls remain yours."
         },
         {
+          id: "pit-wall",
+          phase: "During",
           title: "Virtual Pit Wall",
-          body: "The full race view your cockpit does not have. Six tabs cover everything a real pit wall would track across a race.",
+          body: "A deeper live view of the race and the session. Open it over the dashboard with one tap, or directly from the Home screen.",
           items: [
-            "Full race leaderboard with positions, gaps, sector splits, and tyre compounds",
-            "Live track map showing every car's position on the circuit",
-            "VSC Delta overlay to help you manage your gap during safety car periods",
-            "Car setup reference for the current session",
-            "Game-level session metadata and telemetry",
-            "Technique coaching cards for corner work, ERS, and DRS"
+            "Timing tower: positions, gaps, lap and sector times, tyres and stints",
+            "Live circuit map with every car on track",
+            "Your own lap-by-lap table and live car health",
+            "Lap traces of your driving inputs, with lap comparison",
+            "Setups used this session, linked to your setup library",
+            "Game and session configuration, with compact, readable labels"
           ],
-          screenshots: [
-            ["pit_wall_timing_2.png", "Timing — Catalunya race leaderboard with compounds"],
-            ["pit_wall_map_monaco.png", "Map — live car positions at Monaco"]
+          shots: ["pitWallTiming", "pitWallMap", "pitWallGame"]
+        },
+        {
+          id: "race-replay",
+          phase: "After",
+          title: "Race Replay",
+          body: "Relive a race lap by lap. JMD reconstructs the race from the telemetry it captured and plays back how the field moved, where the gaps changed and what happened along the way.",
+          items: [
+            "Race timing tower with driver abbreviations, positions and gaps",
+            "Lap-by-lap progression with race clock and replay controls",
+            "Tyre and stint progression for every driver",
+            "Safety Car, VSC and red-flag periods",
+            "Retirements and DNFs where the game reported them",
+            "Race-event ticker: pit stops, penalties, fastest laps and flags",
+            "Reconstructed results when final classification is missing and enough timing was captured"
+          ],
+          note: "Available for races and sprint races. Replay uses only the data your device received — it cannot rebuild information the game never sent.",
+          shots: ["raceReplayLandscape", "raceReplayPortrait"]
+        },
+        {
+          id: "session-history",
+          phase: "After",
+          title: "Session History",
+          body: "Every completed session is saved on your device. Each review is shaped by the session type, so practice, qualifying, Time Trial and races each show what matters for them.",
+          items: [
+            "Outcome, race results and full-field classification",
+            "Lap and sector times with tyres and stints",
+            "Setups used during the session",
+            "Weather and session conditions",
+            "Highlights, penalties and race events",
+            "Career statistics across your saved sessions"
+          ],
+          note: "Not every session contains every field. JMD reconstructs what it reliably can and shows missing data as missing.",
+          shots: ["sessionHistory", "raceResults"]
+        },
+        {
+          id: "lap-trace",
+          phase: "During & after",
+          title: "Lap Trace & Analysis",
+          body: "See how you drove, not just how fast. Traces are recorded as you drive and saved with the session.",
+          items: [
+            "Throttle, brake and steering inputs",
+            "Speed, ERS and DRS channels",
+            "Compare a reference lap against another lap",
+            "Zoom and pan to any part of the lap",
+            "Revisit saved laps from Session History"
           ]
         },
         {
-          title: "Lap Trace and Analysis",
-          body: "Inspect your driving inputs lap by lap. See throttle, brake, and steering across the full circuit, or compare two laps side by side to find where time is gained or lost.",
+          id: "setups",
+          phase: "Before & after",
+          title: "Setup & Tyre Memory",
+          body: "Remember what you ran and what worked. Setups are captured from your sessions and collected in a library you can filter by circuit.",
           items: [
-            "Throttle, brake, and steering trace per lap",
-            "Speed trace across the lap distance",
-            "DRS and ERS activation zones per lap",
-            "Lap-to-lap delta comparison — select any two laps",
-            "Zoom and scrub to any section of the circuit",
-            "Fastest lap highlighted as reference"
-          ],
-          screenshots: [
-            ["pit_wall_trace_2.png", "Trace — throttle, brake, and steering at Catalunya"],
-            ["pit_wall_coach_1.png", "Coach — technique cards for corner work and ERS"]
+            "Car setups captured per session",
+            "View Setups library, filterable by circuit, game and car",
+            "Setup references alongside your lap times",
+            "Tyre compounds, stints and wear — including the F1 26 compound range",
+            "Fuel and race context kept with each session"
           ]
         },
         {
-          title: "Session History and Racing Journal",
-          body: "Every completed session is saved automatically. Review what happened lap by lap, how your setups performed, and what the conditions were — so your next weekend starts with memory instead of guesswork.",
+          id: "data",
+          phase: "Always",
+          title: "Private Backup & Data Control",
+          body: "No account, no sign-up. Your data lives on your device, under your control.",
           items: [
-            "Chronological race event log: Jax launch notes, fastest laps, pit stops, setup changes, penalties, and damage updates",
-            "Named setups by lap range with all parameters: wings, differential, brake bias, ride height, and tyre pressures",
-            "Weather timeline — conditions and temperatures by lap range",
-            "Session rules: AI difficulty, damage mode, safety car, and parc fermé settings",
-            "Result, fastest lap, and race outcome summary",
-            "League and season tracking across sessions"
+            "Session history, traces and setups stored on your device",
+            "Optional iCloud Backup of session history to your own private iCloud container",
+            "Export your session history through the iOS share sheet",
+            "Choose how long heavier trace data is kept",
+            "Delete individual sessions or all of them at any time"
           ],
-          screenshots: [
-            ["past_session_highlights.png", "Highlights — race event log at Monza"],
-            ["past_session_setups.png", "Setup — named setups by lap range"]
-          ]
-        },
-        {
-          title: "Setup Memory and Race Context",
-          body: "Track your setup choices, tyre compounds, fuel loads, and race conditions across every session. Build the memory a real team notebook would keep.",
-          items: [
-            "Setup parameters saved per session and lap range",
-            "Tyre compound, stint length, and wear pattern tracking",
-            "Fuel load and usage history",
-            "VSC Delta overlay — real-time gap management during Virtual Safety Car",
-            "Penalty and flag event log per session",
-            "Session conditions recorded for future reference"
-          ],
-          screenshots: [
-            ["past_session_conditions.png", "Conditions — weather timeline and session rules"],
-            ["vsc_delta_orange.png", "VSC Delta — live gap management during safety car"]
-          ]
+          link: ["privacy.html", "Read the privacy policy"]
         }
       ],
-      roadmap: [
-        ["Smarter post-session review", "More structured comparisons across tracks, setups, tyres, and weather."],
-        ["Cloud sync", "Optional sync for drivers who want their racing journal across devices."],
-        ["Expanded game support", "Additional racing titles where reliable telemetry support makes sense."],
-        ["Deeper pit wall intelligence", "Future coaching and strategy features will be framed clearly as roadmap until released."]
+      alsoTitle: "Also included",
+      also: [
+        ["Racing Tips", "Driving technique, racecraft and rules — short, practical reading."],
+        ["Demos", "Explore Jax Max Delta with built-in demos, no game running required."],
+        ["Your units", "km/h or mph, °C or °F."],
+        ["Three languages", "English, French and Spanish throughout the app."]
+      ],
+      futureKicker: "Roadmap",
+      futureTitle: "What we're exploring next",
+      futureIntro: "Directions, not promises. Nothing here has a date, and items move to the list above only once they ship.",
+      future: [
+        ["Race-weekend view", "Practice, qualifying and race connected as one story."],
+        ["Progress over time", "Trends across many sessions: pace, consistency, tyre management."],
+        ["Richer tyre guidance", "Compound-aware tyre strategy context."],
+        ["Android", "Being explored; not available today."]
       ]
     },
     how: {
-      title: "How to use Jax",
-      intro: "Set up telemetry once, keep your phone or tablet on the same network, and let Jax become your second screen, voice alert layer, and session memory.",
-      sections: [
+      title: "How Jax Max Delta works",
+      intro: "Set up telemetry once. Then prepare, race and review — with your iPhone or iPad on the same network as your console or PC.",
+      phaseLabels: { before: "Before", during: "During", after: "After", setup: "Set up" },
+      steps: [
         {
-          kicker: "Getting started",
-          title: "Starting the App",
-          intro: "Install Jax and open it before you go on track. The start screen gives you two paths: connect to a live session or review your session history.",
-          steps: [
-            ["Install Jax", "Install Jax Max Delta through TestFlight or the App Store, then open it on your iPhone or iPad before you enter the track."],
-            ["Enter a live session", "Tap Enter Live Session to open the connection screen. Jax starts listening for telemetry from your game immediately."],
-            ["Or review past sessions", "Tap Session History to browse your saved sessions, setups, lap traces, conditions, and race event logs."]
-          ],
-          portrait: true,
-          screenshots: [["main_screen.png", "Start screen — Enter Live Session or Session History"]]
+          phase: "setup",
+          title: "Install and open Jax Max Delta",
+          body: "Install JMD on your iPhone or iPad. A short first-run tour covers the essentials — you can replay it later from Settings. No account is needed.",
+          shot: "home"
         },
         {
-          kicker: "UDP setup",
-          title: "Setting up UDP and Jax",
-          intro: "Jax receives telemetry from your game over your local Wi-Fi network using the UDP protocol. This is a one-time setup in your game settings.",
-          steps: [
-            ["Same network", "Connect your console or PC and your iPhone or iPad to the same local Wi-Fi network or network segment."],
-            ["Find your device IP", "On your iPhone or iPad, go to Settings → Wi-Fi → tap your network name to see your local IP address. You will need this for the game."],
-            ["Enable UDP in your game", "In your EA SPORTS F1 game, open Settings → Telemetry Settings and enable UDP Telemetry Output."],
-            ["Set the destination", "Enter your device's local IP address as the telemetry IP destination. Set the UDP port to 20777."],
-            ["Confirm in Jax", "The Live Session screen shows Listening on 0.0.0.0:20777. Once your game sends data, the session type and track are detected automatically and the Open Live Dashboard button activates."]
-          ],
-          portrait: true,
-          screenshots: [["waiting_for_live_session.png", "Live Session screen — listening for telemetry on port 20777"]]
-        },
-        {
-          kicker: "Live data",
-          title: "Main Dashboard",
-          intro: "The dashboard displays live race data across three panels. Keep your device visible near your wheel so you can read it without looking away from the track.",
-          steps: [
-            ["Left panel — car state", "Tyre temperatures and wear for all four corners (FL/FR/RL/RR), brake bias (BB), differential (DIFF), wing angle (WING), damage (DMG), and air and track temperatures."],
-            ["Center panel — flag and lap", "The current flag state (GREEN/YELLOW/SC/VSC), lap type (Outlap, Flying, Pit), lap number, speed in km/h, and the ERS or boost bar."],
-            ["Right panel — lap times", "Fuel laps remaining (positive means surplus), current lap (NOW), last lap (LAST), personal best (BEST), session fastest (FASTEST), and sector splits S1/S2/S3."],
-            ["Top bar", "Position, lap count, per-tyre wear at a glance, and the delta to the leader or reference lap."]
-          ],
-          legend: [
-            ["BB", "Brake bias — front/rear split (%)"],
-            ["DIFF", "Differential — on/off throttle (%)"],
-            ["FL/FR", "Front Left/Right tyre temp + wear"],
-            ["RL/RR", "Rear Left/Right tyre temp + wear"],
-            ["WING", "Front wing angle"],
-            ["DMG", "Car body damage (%)"],
-            ["AIR", "Air temperature"],
-            ["TRK", "Track temperature"],
-            ["ERS", "Energy recovery — charge level / mode"],
-            ["DRS", "Drag Reduction System — active / inactive"],
-            ["FUEL", "Fuel laps remaining (+ = surplus)"],
-            ["PIT", "Pit window / stop number"],
-            ["PEN", "Time penalty in seconds"],
-            ["W%", "Rain / weather intensity"],
-            ["SC", "Safety Car on track"],
-            ["VSC", "Virtual Safety Car active"],
-            ["S1/S2/S3", "Sector 1, 2, 3 split times"]
-          ],
-          screenshots: [
-            ["main_dash_yellow.png", "Dashboard — yellow flag at Catalunya"],
-            ["main_dash_green.png", "Dashboard — green flag with ERS boost active"]
+          phase: "setup",
+          title: "Configure UDP telemetry",
+          body: "JMD receives your game's telemetry over your local network. It's a one-time setup in the game.",
+          list: [
+            "Connect your console or PC and your iPhone or iPad to the same local network.",
+            "In JMD, open Settings → SETUP to see this device's IP address and the UDP port JMD listens on (20777 by default).",
+            "In your EA SPORTS F1 game, open the telemetry settings, turn UDP telemetry on, and enter that IP address and port.",
+            "JMD detects the game's telemetry format automatically once packets arrive."
           ]
         },
         {
-          kicker: "Pit wall",
-          title: "Pit Wall",
-          intro: "The Pit Wall gives you a full race overview in six tabs. Access it from the dashboard or from the start screen.",
-          tabs: ["TIMING", "MAP", "TRACE", "SETUP", "GAME", "COACH"],
-          steps: [
-            ["Timing", "Full race leaderboard: position, driver, best lap, gap to leader, sector splits, current lap, tyre compound, and stint status for every car on track."],
-            ["Map", "A live track map showing the position of every car on the circuit, updating in real time."],
-            ["Trace", "Throttle, brake, and steering inputs plotted lap by lap. Select any lap to inspect it, or compare two laps side by side to find a time delta."],
-            ["Setup", "Your car setup values for reference during the session. A VSC Delta overlay appears automatically during Virtual Safety Car periods to help you manage your gap."],
-            ["Game", "Game-level telemetry and session metadata from the current session."],
-            ["Coach", "On-screen technique cards: Corner Entry, Corner Exit, Defending, Wet Driving, ERS, and DRS — reminders you can act on without leaving the session."]
-          ],
-          screenshots: [
-            ["pit_wall_timing_1.png", "Timing — race leaderboard with gaps and compounds"],
-            ["pit_wall_map_monaco.png", "Map — live car positions at Monaco"],
-            ["pit_wall_trace_1.png", "Trace — lap comparison with throttle and brake"],
-            ["pit_wall_coach_1.png", "Coach — technique cards for corner work and ERS"]
-          ]
+          phase: "before",
+          title: "Prepare for the session",
+          body: "Optional, but worth it. Open Prepare for Session from the Home screen, choose the circuit and car, and review the track — or switch to the session view to plan practice, qualifying or the race.",
+          shot: "prepare"
         },
         {
-          kicker: "Session history",
-          title: "Past Sessions",
-          intro: "Every completed session is saved automatically. Open Session History from the start screen to review any past race, qualifying, or practice.",
-          tabs: ["OVERVIEW", "RESULT", "SETUP", "CONDITIONS", "HIGHLIGHTS"],
-          steps: [
-            ["Overview", "Track name, session type, formula, start and end time, duration, laps completed, and the league or season the session belongs to."],
-            ["Result", "Your finishing position, fastest lap time, and race outcome summary."],
-            ["Setup", "Named setups used during the session, organized by lap range — wing angles, differential, brake bias, ride height, and tyre pressures for each stint."],
-            ["Conditions", "Session rules captured at race time: AI difficulty, car damage mode, collision settings, safety car rules, parc fermé, and the full weather timeline by lap range."],
-            ["Highlights", "A chronological race event log: Jax launch note, fastest laps set by you or the field, pit stops, setup changes, penalties, damage updates, and rival events."]
-          ],
-          screenshots: [
-            ["past_session_highlights.png", "Highlights — race event log at Monza"],
-            ["past_session_setups.png", "Setup — named setups by lap range"],
-            ["past_session_conditions.png", "Conditions — session rules and weather timeline"],
-            ["Past_session_overview.png", "Overview — full session summary"]
-          ]
+          phase: "during",
+          title: "Start your session and connect",
+          body: "Open the Dashboard, then head out on track. JMD waits for telemetry and connects as soon as your game starts sending it."
         },
         {
-          kicker: "Configuration",
-          title: "Settings",
-          intro: "Tap the gear icon on the start screen to open settings. Key areas are the dashboard abbreviations guide, Jax voice alert settings, and UDP port configuration.",
-          steps: [
-            ["Dashboard abbreviations guide", "The Plus tab shows the meaning of every abbreviation used on the live dashboard — BB, DIFF, W, PEN, SC, VSC, ERS, DRS — so nothing on screen is a mystery."],
-            ["Jax voice alerts", "In the Jax tab, choose which alert categories to hear: tyres, fuel, delta, penalties, flags, and session events. Adjust volume and timing thresholds per category."],
-            ["UDP port", "The default port is 20777. If your game version uses a different port, update it here. The Live Session screen always shows your device's current listening address."],
-            ["Audio troubleshooting", "If voice alerts are not playing, check that your device is not in silent mode, the in-app volume is not muted, and the relevant alert categories are enabled in Jax settings."]
-          ],
-          portrait: true,
-          screenshots: [["IMG_8682.png", "Settings — dashboard abbreviations guide and UDP information"]]
+          phase: "during",
+          title: "Drive with the Dashboard",
+          body: "Keep your device where you can read it at a glance. The in-app legend explains every abbreviation on the dashboard.",
+          shot: "dashboard"
+        },
+        {
+          phase: "during",
+          title: "Let Jax call it",
+          body: "Choose Jax's voice and the categories you want to hear in Settings → JAX. During a session, Quick Jax on the Pit Wall lets you adjust them without leaving the car."
+        },
+        {
+          phase: "during",
+          title: "Open the Pit Wall when you need more",
+          body: "Tap the Pit Wall handle on the dashboard for timing, the live map, your car, traces, setups and session details. Tap back to return to the dashboard.",
+          shot: "pitWallTiming"
+        },
+        {
+          phase: "after",
+          title: "End the session",
+          body: "When a session ends, JMD recognizes it and saves it to Session History. After a race it tells you where you finished, and lets you correct how the race ended if needed. If telemetry stops before the session clearly ended, JMD asks you."
+        },
+        {
+          phase: "after",
+          title: "Review in Session History",
+          body: "Open Session History from Home to find any saved session. Each review is shaped by the session type: pace for practice and qualifying, the full story for races.",
+          shot: "sessionHistory"
+        },
+        {
+          phase: "after",
+          title: "Replay your race",
+          body: "For races and sprint races, open the RACE tab to watch Race Replay: the timing tower, gaps, tyres and race events, lap by lap.",
+          shot: "raceReplayLandscape"
+        },
+        {
+          phase: "setup",
+          title: "Manage settings, data and backup",
+          body: "Settings → SUPPORT holds recording and data-retention options, iCloud Backup (back up now, restore) and the built-in demos. Settings → LEGAL links to the terms and privacy policy."
         }
       ],
-      troubleTitle: "Common troubleshooting",
+      troubleTitle: "Troubleshooting",
       trouble: [
-        ["No telemetry received", "Confirm UDP telemetry is enabled in your game, the destination IP matches your device, both devices are on the same network, and the UDP port is 20777."],
-        ["Data stops mid-session", "Check that the device stayed on Wi-Fi, low power mode did not interrupt the app, and the console did not switch networks."],
-        ["Wrong device IP", "Phone and tablet IP addresses can change between sessions. Recheck your Wi-Fi settings and update the telemetry destination in the game if needed."],
-        ["Voice alerts not playing", "Check device volume, silent mode, app audio settings, and whether the relevant voice alert categories are enabled in Jax settings."]
+        ["No telemetry received", "Check that UDP telemetry is on in your game, the IP address matches the one in JMD Settings → SETUP, the port matches, and both devices are on the same network."],
+        ["Data stops mid-session", "Make sure your device stayed on Wi-Fi, that Low Power Mode didn't interrupt the app, and that the console didn't switch networks."],
+        ["The device IP changed", "Local IP addresses can change between sessions. Recheck Settings → SETUP in JMD and update the game's telemetry settings if needed."],
+        ["Jax is silent", "Check device volume and silent mode, then make sure Jax's voice and the relevant categories are enabled in Settings → JAX or Quick Jax."],
+        ["No Race Replay for a session", "Race Replay is available for races and sprint races that were captured in enough detail. Practice, qualifying and Time Trial have their own pace-focused review."],
+        ["Some values are missing", "Not every game session sends every field. JMD shows missing data as missing rather than guessing."]
       ]
     },
     support: {
       title: "Support for Jax Max Delta",
-      intro: "Find setup help, FAQ answers, common UDP and voice alert issues, and a simple way to send tester feedback.",
+      intro: "Setup help, answers to common questions, and a direct way to reach us.",
       faqTitle: "FAQ",
       faq: [
-        ["Does Jax work on console?", "Yes. Jax is designed with console racers in mind. The key requirement is that your game can send supported telemetry data and your phone or tablet is on the same network."],
+        ["Does Jax Max Delta work on console?", "Yes. JMD is designed with console racers in mind. Your game needs to send UDP telemetry, and your iPhone or iPad needs to be on the same local network as your PlayStation, Xbox or PC."],
+        ["Which games are supported?", "EA SPORTS F1 24, F1 25 and F1 26, using the game's UDP telemetry output."],
+        ["Is it available on Android?", "Not yet. Jax Max Delta currently runs on iPhone and iPad."],
         ["Is Jax officially affiliated with EA, F1, Codemasters, Fanatec, PlayStation, or Xbox?", "No. Jax Max Delta is independent and uses telemetry data from supported games where available."],
-        ["Is this only a telemetry dashboard?", "No. The dashboard is one part of the product. Jax is also your virtual pit wall crew, voice alert layer, personal race engineer, and racing journal for sessions, setups, tyres, fuel, penalties, weather, and progress."],
+        ["Is this only a telemetry dashboard?", "No. The live dashboard is one part. JMD also helps you prepare for a session, gives you Jax's voice calls and a full pit wall while you drive, and keeps your session history, setups, lap traces and Race Replay afterwards."],
+        ["Why is there no Race Replay for some sessions?", "Race Replay is for races and sprint races that were captured in enough detail. Practice, qualifying and Time Trial sessions have their own review, focused on pace."],
         ["Where is my data stored?", "On your device. Session history, lap traces and setups live in the app's private storage. If iCloud is available, the app can also back up your session history and leagues into your own private iCloud container, which we cannot read. See the privacy policy for details."],
+        ["Where can I download it?", "Jax Max Delta is preparing for its App Store release. The download link will appear on this site as soon as it is available."],
         ["How do I report feedback as a tester?", "Send the device model, game title, console or PC, session type, and what happened to support@jaxmaxdelta.com."]
       ],
-      knownTitle: "Known issues",
+      knownTitle: "Common issues",
       known: [
         "No UDP data received because telemetry output is disabled in the game.",
         "Phone or tablet is not on the same network as the console or PC.",
         "Wrong game UDP destination IP, port, or telemetry format.",
         "Voice alerts not playing because device volume, silent mode, or alert categories need adjustment."
       ],
-      feedbackTitle: "Tester feedback",
+      feedbackTitle: "Contact & feedback",
       feedbackBody: "Useful reports include your game, platform, device, app version, telemetry settings, and a short description of what you expected versus what happened."
     },
+    roadmap: {
+      title: "Roadmap",
+      intro: "What's in Jax Max Delta today, and the directions we're exploring next. Future items carry no dates and may change.",
+      groups: [
+        ["Available now · R1", [
+          "Prepare for Session: circuit map, corners, tyres, setup and session context",
+          "Live Dashboard",
+          "Jax voice calls and contextual coaching, with Quick Jax",
+          "Pit Wall: timing, live map, car health, lap traces, setups and game/session details",
+          "Session History, shaped by session type",
+          "Race Replay for races and sprint races",
+          "Lap traces and lap comparison",
+          "Setup tracking and a setup library by circuit",
+          "Tyre, fuel and race context",
+          "F1 26 energy management",
+          "DRS, Safety Car, VSC and red-flag handling",
+          "Private iCloud Backup of session history",
+          "Racing Tips and built-in demos",
+          "English, French and Spanish"
+        ]],
+        ["Next · Refinement", [
+          "Polish driven by early-release feedback",
+          "Broader preparation coverage for more circuit and car combinations",
+          "More ways to compare sessions across circuits, setups and conditions"
+        ]],
+        ["Exploring · Future", [
+          "A connected race-weekend view: practice, qualifying and race as one story",
+          "Replay-style review for practice and qualifying sessions",
+          "Long-term progress trends across many sessions",
+          "Richer, compound-aware tyre strategy guidance",
+          "Android",
+          "Additional racing games where telemetry support is reliable"
+        ]]
+      ]
+    },
+    // Legal and blog text below is carried over unchanged.
     privacy: {
       title: "Privacy Policy",
       intro: "Jax Max Delta has no accounts and asks you for no personal information. This policy explains what stays on your device, the few things that leave it — crash diagnostics, purchases, and a backup into your own private iCloud container — and how to delete everything.",
@@ -374,15 +545,6 @@ const copy = {
         ["Telemetry compatibility", "Compatibility depends on supported racing games, telemetry settings, local network conditions, devices, and platform behavior. Features may change over time."],
         ["Early access and placeholders", "Some links, services, and roadmap items may be placeholders during early access and may change before public release."],
         ["Contact", "Questions about these terms can be sent to support@jaxmaxdelta.com."]
-      ]
-    },
-    roadmap: {
-      title: "Roadmap",
-      intro: "Jax is being built in stages. This page separates what exists now from what is next and what remains future work.",
-      groups: [
-        ["R1 / Current", ["Second-screen live dashboard", "Voice coaching and race-engineer style alerts", "Session history", "Setup tracking", "Tyre, fuel, penalties, flags, weather, and race event context", "Track memory and racing journal foundations"]],
-        ["R2 / Next", ["More post-session review tools", "Better setup comparison by track and conditions", "Expanded tester feedback workflow", "More polished early access onboarding", "Clearer dashboard layouts for phone and tablet"]],
-        ["Future", ["Optional cloud sync", "Expanded telemetry game support", "Deeper coaching intelligence once validated", "League weekend preparation tools", "Richer long-term driver progress trends"]]
       ]
     },
     blog: {
@@ -433,548 +595,942 @@ const copy = {
     }
   },
   fr: {
-    meta: {
-      title: "Jax Max Delta - Equipe virtuelle au muret des puits pour sim racers",
-      description: "Jax Max Delta transforme votre telephone ou tablette en donnees de course, alertes vocales, memoire de session et soutien au muret des puits."
+    nav: {
+      home: "Accueil",
+      features: "Fonctions",
+      how: "Fonctionnement",
+      support: "Soutien",
+      blog: "Blogue",
+      roadmap: "Feuille de route",
+      privacy: "Confidentialité",
+      terms: "Conditions"
     },
-    nav: { home: "Accueil", features: "Fonctions", how: "Utilisation", support: "Support", blog: "Blogue", roadmap: "Feuille de route", privacy: "Confidentialite", terms: "Conditions" },
     common: {
-      parent: "Camilore", app: "Jax Max Delta", eyebrow: "Application compagnon de sim racing", ctaJoin: "Rejoindre TestFlight", ctaTry: "Essayer Jax", ctaFeatures: "Voir les fonctions", ctaHow: "Voir comment ca marche", ctaBlog: "Lire le blogue", ctaSupport: "Contacter le support",
-      placeholder: "Lien temporaire - a remplacer quand le lien App Store ou TestFlight final sera pret.",
-      disclaimer: "Jax Max Delta est une application compagnon de sim racing independante. Elle n'est pas affiliee a EA, Codemasters, Formula 1, FIA, Microsoft, Sony, Fanatec ni a toute autre marque mentionnee, et n'est pas approuvee par celles-ci.",
-      footerLead: "Votre equipe virtuelle au muret des puits, votre ingenieur de course personnel et votre carnet de course.", readPost: "Lire l'article"
+      parent: "Camilore",
+      app: "Jax Max Delta",
+      eyebrow: "Compagnon de sim racing pour iPhone et iPad",
+      skip: "Aller au contenu",
+      menu: "Menu",
+      language: "Langue",
+      storeSoon: "Bientôt sur l'App Store",
+      storeCta: "Télécharger dans l'App Store",
+      testflightCta: "Rejoindre la bêta TestFlight",
+      ctaFeatures: "Découvrir les fonctions",
+      ctaHow: "Voir le fonctionnement",
+      ctaSupport: "Contacter le soutien",
+      ctaPrivacy: "Lire la politique de confidentialité",
+      ctaReplay: "En savoir plus sur Race Replay",
+      shotSoon: "Capture d'écran actuelle à venir",
+      available: "Disponible maintenant",
+      disclaimer: "Jax Max Delta est une application compagnon de sim racing indépendante. Elle n'est pas affiliée à EA, Codemasters, Formula 1, la FIA, Microsoft, Sony, Fanatec ni à toute autre marque mentionnée, et n'est pas approuvée par celles-ci.",
+      footerLead: "Votre ingénieur de course, votre mur des stands et votre mémoire de course — pour les pilotes F1 virtuels sur iPhone et iPad.",
+      footerProduct: "Produit",
+      footerHelp: "Aide et mentions légales",
+      readPost: "Lire l'article"
+    },
+    shots: {
+      home: "Accueil",
+      prepare: "Préparer la session",
+      dashboard: "Tableau de bord en direct",
+      pitWallTiming: "Mur des stands — Chronos",
+      pitWallMap: "Mur des stands — Carte",
+      pitWallGame: "Mur des stands — Jeu",
+      sessionHistory: "Historique des sessions",
+      raceResults: "Résultats de course",
+      raceReplayPortrait: "Race Replay",
+      raceReplayLandscape: "Race Replay"
     },
     home: {
-      kicker: "Second ecran. Alertes vocales. Muret des puits.",
-      title: "Votre equipe virtuelle au muret des puits.",
-      position: "Jax Max Delta transforme votre telephone ou tablette en donnees de course, alertes vocales, memoire de session et soutien strategique que votre cockpit ne vous montre pas toujours.",
-      intro: "Roulez avec plus qu'un tableau de bord. Jax rassemble telemetrie en direct, alertes vocales de style ingenieur, historique de session, memoire des reglages et insights de course pour que vous vous sentiez accompagne a chaque tour.",
-      telemetry: [["Delta", "-0.284"], ["Pneus", "Medium 41 %"], ["Essence", "+1,8 tour"], ["Prochaine alerte", "Fenetre d'arret"]],
-      whoTitle: "Pour qui Jax est fait",
-      whoIntro: "Jax part de vrais irritants de sim racing, surtout sur console quand la vue cockpit ou le volant cache des informations critiques.",
-      who: [["Le volant cache le dash", "Affichez les donnees utiles sur un second ecran sans changer de camera."], ["Pilotes console", "Pense pour les joueurs Xbox et PlayStation qui utilisent la telemetrie des jeux compatibles."], ["Coureurs de ligue", "Gardez l'historique des sessions, reglages, pneus, essence, penalites, meteo et progres."], ["Pilotes qui veulent progresser", "Utilisez la memoire de session pour retrouver ce qui a marche sur chaque circuit."]],
-      benefitsTitle: "Roulez avec une equipe",
-      benefitsIntro: "Du cockpit au muret des puits jusqu'a l'analyse apres session, Jax vous aide a mieux courir et a retenir ce qui a fonctionne.",
-      benefits: [["L'equipe qui manque a votre cockpit", "Les infos critiques restent visibles sur telephone ou tablette quand le volant bloque le HUD."], ["Votre ingenieur dans l'oreille", "Des alertes vocales peuvent signaler pneus, essence, deltas, penalites et evenements importants sans pretendre decider toute la strategie."], ["Votre carnet d'equipe", "Sauvegardez notes, reglages, gommes et resultats pour apprendre d'une course a l'autre."]],
-      featuresTitle: "Ce que fait Jax",
-      featuresIntro: "Tableau de bord en direct, alertes vocales, contexte de muret des puits, historique de session, memoire des reglages et pneus, et outils pour progresser avec le temps.",
-      pillars: [["Live Dashboard", "Les donnees de course sur telephone ou tablette quand le volant ou le cockpit cache l'affichage du jeu."], ["Jax Voice Alerts", "Des alertes de style ingenieur pour les moments ou vous ne devriez pas quitter la piste des yeux."], ["Equipe virtuelle au muret des puits", "L'equipe qui manque a votre cockpit : contexte, rappels et soutien sans pretendre automatiser la strategie."], ["Historique des sessions", "Un dossier apres session avec tours, notes, evenements et progression."], ["Memoire reglages et pneus", "Retenez quel reglage, compose et relais ont fonctionne sur chaque piste."], ["Progresser avec le temps", "Transformez chaque session en connaissance utile pour le prochain week-end."]],
-      earlyTitle: "Acces anticipe", earlyBody: "Jax evolue en acces anticipe, du tableau de bord second ecran vers une equipe virtuelle au muret des puits, un ingenieur de course personnel et un carnet de course. Les liens TestFlight et App Store sont temporaires pour le moment.",
-      supportedTitle: "Jeux et plateformes compatibles", supportedBody: "Jax fonctionne avec les donnees de telemetrie des jeux compatibles. L'objectif actuel est les titres EA SPORTS F1 avec telemetrie UDP sur iPhone et iPad, incluant les consoles sur le meme reseau local.",
-      quickLinksTitle: "Continuer", quickLinks: [["Fonctions", "Explorez tableau de bord, alertes vocales, muret des puits virtuel, reglages, pneus, essence, penalites, drapeaux, meteo et journal.", "features.html"], ["Utilisation", "Configurez la telemetrie UDP, connectez votre appareil et depannez les problemes courants.", "how-to.html"], ["Support", "FAQ, problemes connus, retours de testeurs et contact.", "support.html"], ["Confidentialite", "Details clairs sur la telemetrie, le stockage sur l'appareil, la sauvegarde iCloud et ce qui ne quitte jamais votre telephone.", "privacy.html"]]
+      titleLines: ["Votre ingénieur de course.", "Votre mur des stands.", "Votre mémoire de course."],
+      lead: "Jax Max Delta transforme la télémétrie F1 en direct en informations, en coaching, en contexte de course et en historique — avant, pendant et après chaque session.",
+      visualLabel: "Illustration d'une trace de tour sur trois secteurs",
+      proof: ["iPhone et iPad", "EA SPORTS F1 24 · F1 25 · F1 26", "Télémétrie UDP locale", "PlayStation · Xbox · PC", "Aucun compte requis", "English · Français · Español"],
+      phasesKicker: "Avant · Pendant · Après",
+      phasesTitle: "Un seul compagnon, du début à la fin.",
+      phasesIntro: "Jax Max Delta vous suit tout au long de la session : ce qu'il faut savoir avant de quitter le garage, ce qui compte pendant que vous pilotez, et ce qui s'est vraiment passé une fois la course terminée.",
+      phases: [
+        ["Avant", "Préparer", "Choisissez le circuit et la voiture, puis étudiez le tracé, les virages, les pneus, les notes de réglages et votre propre historique.", "#prepare"],
+        ["Pendant", "Piloter", "Un tableau de bord en direct, Jax à la radio et un mur des stands complet — lisibles d'un coup d'œil sur votre téléphone ou votre tablette.", "#race"],
+        ["Après", "Analyser", "Chaque session enregistrée sur votre appareil : résultats, réglages, conditions, traces de tour — et la reprise de votre course.", "#review"]
+      ],
+      prepare: {
+        kicker: "Avant · Préparer la session",
+        title: "Connaissez le circuit avant de prendre la piste.",
+        body: "Préparer la session réunit la connaissance du circuit et votre propre historique. Choisissez la piste et la voiture, puis passez en revue ce qui compte pour la session à venir — essais, qualifications, sprint ou course.",
+        items: [
+          "Carte interactive du circuit avec virages numérotés",
+          "Notes par virage — rapport, vitesse, freinage et point de corde lorsque les données existent",
+          "Contexte de la voie des stands, du radar de vitesse, du DRS et de la gestion de l'énergie",
+          "Pneus et réglages à considérer pour la voiture choisie",
+          "Longueur de course, météo et contexte voiture de sécurité",
+          "Vos sessions et réglages précédents sur ce circuit"
+        ],
+        note: "Les données de préparation varient selon le circuit et la voiture. JMD affiche ce qu'il possède pour la combinaison choisie et vous indique ce qui n'est pas disponible."
+      },
+      race: {
+        kicker: "Pendant · Tableau de bord en direct",
+        title: "Tout ce que le cockpit vous cache, d'un coup d'œil.",
+        body: "Placez votre iPhone ou votre iPad près du volant et gardez les chiffres importants sous les yeux — sans changer de caméra ni encombrer l'affichage du jeu.",
+        items: [
+          "Position, tour, vitesse, rapport, accélérateur et frein",
+          "Chronos au tour, par secteur et delta",
+          "Gomme, usure et températures des pneus",
+          "Températures des freins et du moteur",
+          "Carburant, ERS — y compris la gestion de l'énergie de F1 26 — et DRS",
+          "Drapeaux, voiture de sécurité, VSC, arrêts et pénalités",
+          "Dégâts d'aileron, météo et contexte de session"
+        ],
+        jaxKicker: "Jax · Voix",
+        jaxTitle: "Jax, à la radio.",
+        jaxBody: "Jax est la voix de votre ingénieur de course : des messages courts, au bon moment, sur ce qui vient de changer, pour que vos yeux restent sur la piste. Choisissez les catégories à entendre — et ajustez-les en pleine session avec le bouton Jax du mur des stands.",
+        jaxItems: ["Pneus et carburant", "Chronos, delta et écarts", "Drapeaux, voiture de sécurité et VSC", "Pénalités et direction de course", "Rappels et coaching selon le contexte"],
+        jaxNote: "Jax informe et rappelle. Le pilotage — et les décisions de stratégie — restent les vôtres."
+      },
+      pitWall: {
+        kicker: "Pendant · Mur des stands",
+        title: "La vue depuis le mur des stands.",
+        body: "Quand le tableau de bord ne suffit plus, ouvrez le mur des stands — d'une touche depuis le tableau de bord, ou directement depuis l'accueil. Tout le peloton, tout le circuit et votre voiture dans une seule vue paysage.",
+        items: [
+          "Tour de chronométrage : positions, écarts, secteurs et pneus",
+          "Carte du circuit en direct avec toutes les voitures",
+          "Votre tableau tour par tour et l'état de votre voiture",
+          "Traces de tour avec commandes, ERS et DRS, et comparaison de tours",
+          "Réglages de la session et configuration du jeu et de la session"
+        ]
+      },
+      replay: {
+        kicker: "Après · Race Replay",
+        title: "Revivez votre course.",
+        body: "Race Replay reconstruit une course à partir de la télémétrie captée par JMD et la rejoue tour par tour : la tour de chronométrage qui se réorganise, les écarts qui se creusent et se referment, les changements de pneus et les moments qui ont fait la différence.",
+        items: [
+          "Tour de chronométrage avec abréviations des pilotes, positions et écarts",
+          "Progression tour par tour avec horloge de course et commandes de lecture",
+          "Relais et arrêts aux stands de tout le peloton",
+          "Périodes de voiture de sécurité, de VSC et de drapeau rouge",
+          "Abandons et fil des événements de course",
+          "Un classement reconstruit quand le jeu n'a pas envoyé de résultats finaux"
+        ],
+        note: "Race Replay s'appuie sur les données reçues par votre appareil pendant la course. Si le jeu n'envoie pas de classement final, JMD reconstruit le résultat à partir des chronos captés lorsqu'il y en a assez — il n'invente jamais ce qui n'a pas été reçu.",
+        badge: "Courses et courses sprint"
+      },
+      history: {
+        kicker: "Après · Historique des sessions",
+        title: "Un carnet de course qui s'écrit tout seul.",
+        body: "Les sessions terminées sont enregistrées sur votre appareil et analysées selon leur nature : les essais et les qualifications mettent le rythme en avant, les courses racontent toute l'histoire.",
+        items: [
+          "Résultats et issue de la session — les vôtres et ceux du peloton",
+          "Chronos au tour et par secteur, pneus et relais",
+          "Réglages utilisés, avec une bibliothèque de réglages par circuit",
+          "Météo et conditions de session",
+          "Pénalités, faits saillants et événements de course",
+          "Traces de tour enregistrées pour revoir votre pilotage"
+        ],
+        note: "Le contenu d'une session dépend de ce que le jeu a envoyé. JMD comble les lacunes à partir des données captées lorsque c'est possible, et affiche les données manquantes comme manquantes."
+      },
+      privacy: {
+        kicker: "Vos données",
+        title: "Confidentiel dès la conception.",
+        body: "Jax Max Delta n'a aucun compte utilisateur et ne vous demande aucune information personnelle. Votre télémétrie circule uniquement sur votre propre réseau, et votre historique reste sur votre appareil.",
+        points: [
+          ["Aucun compte", "Aucune inscription, aucune collecte de courriel."],
+          ["Sur votre appareil", "Sessions, traces de tour et réglages restent dans le stockage privé de l'app."],
+          ["Votre propre iCloud", "Si iCloud est disponible, l'historique des sessions peut être sauvegardé dans votre conteneur iCloud privé — que nous ne pouvons pas lire."],
+          ["Ni pub ni pistage", "Aucune publicité, aucun identifiant publicitaire, aucun suivi entre apps."]
+        ]
+      },
+      platforms: {
+        kicker: "Compatibilité",
+        title: "Conçu pour les pilotes F1 sur console et PC.",
+        body: "Jax Max Delta écoute la télémétrie UDP que votre jeu EA SPORTS F1 envoie sur votre réseau local. Votre iPhone ou iPad doit simplement être sur le même réseau que votre console ou votre PC.",
+        groups: [
+          ["Jeux", ["EA SPORTS F1 24", "EA SPORTS F1 25", "EA SPORTS F1 26"]],
+          ["Pilotez sur", ["PlayStation", "Xbox", "PC"]],
+          ["JMD sur", ["iPhone", "iPad"]]
+        ],
+        note: "Android n'est pas encore disponible."
+      },
+      availability: {
+        kicker: "Disponibilité",
+        soonTitle: "Bientôt sur l'App Store.",
+        liveTitle: "Disponible sur l'App Store.",
+        body: "Jax Max Delta se prépare à sa sortie publique sur iPhone et iPad. Des questions ou des commentaires d'ici là? Écrivez-nous, ça nous fera plaisir."
+      }
     },
     features: {
-      title: "Plus qu'un tableau de bord.",
-      intro: "Jax Max Delta est votre affichage cockpit sur second ecran, vos alertes vocales de style ingenieur, votre equipe virtuelle au muret des puits et votre carnet d'equipe.",
-      current: "Actuel et concret",
-      future: "Feuille de route",
+      title: "Tout ce que Jax Max Delta fait aujourd'hui.",
+      intro: "Un compagnon complet pour les pilotes F1 virtuels, organisé selon ce dont vous avez besoin avant, pendant et après chaque session. Tout ce qui figure sur cette page fait partie de la version actuelle; les travaux futurs sont présentés séparément à la fin.",
       groups: [
         {
+          id: "prepare",
+          phase: "Avant",
+          title: "Préparer la session",
+          body: "Choisissez un circuit et une voiture, puis étudiez le circuit et planifiez la session à venir. La connaissance du circuit et votre propre historique, côte à côte.",
+          items: [
+            "Aperçu du circuit avec une carte interactive et des virages numérotés",
+            "Notes virage par virage : rapport, vitesse, freinage et point de corde lorsque les données existent",
+            "Voie des stands, radar de vitesse, zones DRS et gestion de l'énergie",
+            "Pneus et réglages à considérer pour la voiture choisie",
+            "Longueur de course, météo et contexte voiture de sécurité / VSC",
+            "Repères pour les essais, les qualifications et la course selon la session planifiée",
+            "Vos sessions et réglages précédents sur ce circuit"
+          ],
+          note: "La couverture varie selon le circuit et la voiture; l'information manquante est signalée plutôt que devinée.",
+          shots: ["prepare"]
+        },
+        {
+          id: "dashboard",
+          phase: "Pendant",
           title: "Tableau de bord en direct",
-          body: "Votre affichage cockpit complet sur un second ecran. Gardez les donnees critiques visibles sans changer de camera ni encombrer le HUD du jeu.",
+          body: "Un affichage de course en mode paysage pour votre iPhone ou votre iPad. Gardez l'information critique visible sans changer de caméra ni encombrer l'affichage du jeu.",
           items: [
-            "Vitesse, rapport, acceleration et freinage en temps reel",
-            "Temperatures et usure des pneus sur les quatre roues — avec alertes de chaleur en couleur",
-            "Tours d'essence restants avec surplus ou deficit d'un coup d'oeil",
-            "Delta par rapport au leader ou au tour de reference",
-            "Tour actuel, dernier tour, meilleur personnel et plus rapide de la session",
-            "Secteurs S1/S2/S3 par tour",
-            "Etat du drapeau, barre ERS et boost, et fenetre d'arret"
+            "Position, tour, vitesse, rapport, accélérateur et frein",
+            "Tour en cours, dernier et meilleur tour, temps par secteur et delta",
+            "Gomme, usure et températures des quatre pneus",
+            "Températures des freins et du moteur dans l'unité de votre choix",
+            "Carburant, ERS et gestion de l'énergie de F1 26, DRS",
+            "Drapeaux, voiture de sécurité, VSC, arrêts et pénalités",
+            "Dégâts d'aileron, météo et contexte de session"
           ],
-          screenshots: [
-            ["main_dash_yellow.png", "Drapeau jaune a Catalunya — tableau de bord complet"],
-            ["main_dash_hot_tyre.png", "Alerte de chaleur pneu — arriere gauche en surchauffe"]
+          shots: ["dashboard"]
+        },
+        {
+          id: "jax",
+          phase: "Pendant",
+          title: "Jax — la voix de votre ingénieur de course",
+          body: "Jax annonce ce qui a changé, au moment où ça compte, pour que vous gardiez les yeux sur la piste. Ses messages découlent directement de la télémétrie — cohérents et prévisibles, jamais improvisés.",
+          items: [
+            "État des pneus et carburant",
+            "Chronos, delta et écarts avec les voitures autour de vous",
+            "Drapeaux, voiture de sécurité et VSC",
+            "Pénalités et décisions de la direction de course",
+            "Météo, gestion de l'énergie et rappels de stratégie",
+            "Choix des catégories et de la voix dans les Réglages, ou en pleine session avec le bouton Jax du mur des stands"
+          ],
+          note: "Jax fournit de l'information et des rappels. Les décisions de pilotage et de stratégie vous appartiennent."
+        },
+        {
+          id: "pit-wall",
+          phase: "Pendant",
+          title: "Mur des stands virtuel",
+          body: "Une vue plus approfondie de la course et de la session, en direct. Ouvrez-le par-dessus le tableau de bord d'une seule touche, ou directement depuis l'accueil.",
+          items: [
+            "Tour de chronométrage : positions, écarts, temps au tour et par secteur, pneus et relais",
+            "Carte du circuit en direct avec toutes les voitures en piste",
+            "Votre tableau tour par tour et l'état de votre voiture en direct",
+            "Traces de vos commandes de pilotage, avec comparaison de tours",
+            "Réglages utilisés pendant la session, liés à votre bibliothèque",
+            "Configuration du jeu et de la session, avec des libellés compacts et lisibles"
+          ],
+          shots: ["pitWallTiming", "pitWallMap", "pitWallGame"]
+        },
+        {
+          id: "race-replay",
+          phase: "Après",
+          title: "Race Replay",
+          body: "Revivez une course tour par tour. JMD reconstruit la course à partir de la télémétrie captée et montre comment le peloton a évolué, où les écarts ont changé et ce qui s'est passé en chemin.",
+          items: [
+            "Tour de chronométrage avec abréviations des pilotes, positions et écarts",
+            "Progression tour par tour avec horloge de course et commandes de lecture",
+            "Évolution des pneus et des relais de chaque pilote",
+            "Périodes de voiture de sécurité, de VSC et de drapeau rouge",
+            "Abandons lorsque le jeu les a signalés",
+            "Fil des événements : arrêts, pénalités, meilleurs tours et drapeaux",
+            "Résultats reconstruits lorsque le classement final manque et que suffisamment de chronos ont été captés"
+          ],
+          note: "Offert pour les courses et les courses sprint. La reprise utilise uniquement les données reçues par votre appareil — elle ne peut pas reconstruire ce que le jeu n'a jamais envoyé.",
+          shots: ["raceReplayLandscape", "raceReplayPortrait"]
+        },
+        {
+          id: "session-history",
+          phase: "Après",
+          title: "Historique des sessions",
+          body: "Chaque session terminée est enregistrée sur votre appareil. Chaque analyse s'adapte au type de session : essais, qualifications, contre-la-montre et courses montrent chacun ce qui compte pour eux.",
+          items: [
+            "Issue de la session, résultats de course et classement complet",
+            "Temps au tour et par secteur, avec pneus et relais",
+            "Réglages utilisés pendant la session",
+            "Météo et conditions de session",
+            "Faits saillants, pénalités et événements de course",
+            "Statistiques de carrière sur l'ensemble de vos sessions"
+          ],
+          note: "Une session ne contient pas toujours tous les champs. JMD reconstruit ce qu'il peut de façon fiable et affiche les données manquantes comme manquantes.",
+          shots: ["sessionHistory", "raceResults"]
+        },
+        {
+          id: "lap-trace",
+          phase: "Pendant et après",
+          title: "Traces de tour et analyse",
+          body: "Voyez comment vous avez piloté, pas seulement à quelle vitesse. Les traces sont enregistrées pendant que vous roulez et conservées avec la session.",
+          items: [
+            "Accélérateur, frein et direction",
+            "Canaux de vitesse, d'ERS et de DRS",
+            "Comparaison d'un tour de référence avec un autre tour",
+            "Zoom et déplacement sur n'importe quelle partie du tour",
+            "Tours enregistrés consultables dans l'historique des sessions"
           ]
         },
         {
-          title: "Alertes vocales Jax",
-          body: "Votre ingenieur de course dans l'oreille. Jax annonce les informations utiles au bon moment, sans que vous ayez besoin de quitter la piste des yeux.",
+          id: "setups",
+          phase: "Avant et après",
+          title: "Mémoire des réglages et des pneus",
+          body: "Souvenez-vous de ce que vous avez utilisé et de ce qui a fonctionné. Les réglages sont captés pendant vos sessions et regroupés dans une bibliothèque filtrable par circuit.",
           items: [
-            "Alertes de temperature et d'usure des pneus par roue",
-            "Alertes de delta d'essence et suggestions de strategie",
-            "Alertes de delta au tour et de regularite",
-            "Annonces de penalites et de drapeaux",
-            "Notifications d'entree et de sortie de safety car et VSC",
-            "Rappels de fenetre d'arret et d'evenements de session"
-          ],
-          screenshots: [
-            ["main_dash_green.png", "Tour en vert — couche d'alertes vocales active"]
+            "Réglages de voiture captés à chaque session",
+            "Bibliothèque « Voir les réglages », filtrable par circuit, jeu et voiture",
+            "Référence de réglage à côté de vos chronos",
+            "Gommes, relais et usure — y compris la gamme de gommes de F1 26",
+            "Carburant et contexte de course conservés avec chaque session"
           ]
         },
         {
-          title: "Muret des puits virtuel",
-          body: "La vue de course complete que votre cockpit n'a pas. Six onglets couvrent tout ce qu'un vrai muret des puits suivrait pendant la course.",
+          id: "data",
+          phase: "Toujours",
+          title: "Sauvegarde privée et contrôle des données",
+          body: "Aucun compte, aucune inscription. Vos données restent sur votre appareil, sous votre contrôle.",
           items: [
-            "Classement complet avec positions, ecarts, secteurs et gommes",
-            "Carte de piste en direct montrant la position de chaque voiture",
-            "Overlay VSC Delta pour gerer votre ecart pendant les periodes de safety car virtuelle",
-            "Reference des reglages de voiture pour la session en cours",
-            "Metadonnees de session et telemetrie au niveau du jeu",
-            "Fiches techniques pour les virages, l'ERS et le DRS"
+            "Historique des sessions, traces et réglages stockés sur votre appareil",
+            "Sauvegarde iCloud facultative de l'historique des sessions dans votre propre conteneur iCloud privé",
+            "Exportation de l'historique des sessions avec la feuille de partage iOS",
+            "Choix de la durée de conservation des traces, plus volumineuses",
+            "Suppression d'une session ou de toutes les sessions en tout temps"
           ],
-          screenshots: [
-            ["pit_wall_timing_2.png", "Timing — classement de course a Catalunya avec gommes"],
-            ["pit_wall_map_monaco.png", "Map — positions en direct a Monaco"]
-          ]
-        },
-        {
-          title: "Trace et analyse de tour",
-          body: "Inspectez vos entrees de pilotage tour par tour. Visualisez acceleration, freinage et direction sur tout le circuit, ou comparez deux tours pour trouver le delta.",
-          items: [
-            "Trace acceleration, freinage et direction par tour",
-            "Trace de vitesse sur la distance du tour",
-            "Zones d'activation DRS et ERS par tour",
-            "Comparaison delta tour a tour — selectionnez deux tours",
-            "Zoom et defilement sur n'importe quelle section du circuit",
-            "Tour le plus rapide mis en evidence comme reference"
-          ],
-          screenshots: [
-            ["pit_wall_trace_2.png", "Trace — acceleration, freinage et direction a Catalunya"],
-            ["pit_wall_coach_1.png", "Coach — fiches techniques pour les virages et l'ERS"]
-          ]
-        },
-        {
-          title: "Historique et journal de course",
-          body: "Chaque session terminee est sauvegardee automatiquement. Revoyez ce qui s'est passe tour par tour, comment vos reglages ont fonctionne et quelles etaient les conditions.",
-          items: [
-            "Journal d'evenements chronologique : notes Jax, meilleurs tours, arrets, changements de reglages, penalites et degats",
-            "Reglages nommes par plage de tours avec tous les parametres : ailerons, differentiel, repartition de freinage, hauteur de caisse, pressions pneus",
-            "Timeline meteo — conditions et temperatures par plage de tours",
-            "Regles de session : difficulte IA, mode degats, safety car, parc ferme",
-            "Resultat, meilleur tour et resume de course",
-            "Suivi de ligue et de saison entre sessions"
-          ],
-          screenshots: [
-            ["past_session_highlights.png", "Highlights — journal d'evenements a Monza"],
-            ["past_session_setups.png", "Setup — reglages nommes par plage de tours"]
-          ]
-        },
-        {
-          title: "Memoire des reglages et contexte de course",
-          body: "Suivez vos choix de reglages, gommes, charges d'essence et conditions de course sur toutes vos sessions. Constituez la memoire qu'un vrai carnet d'equipe tiendrait.",
-          items: [
-            "Parametres de reglage sauvegardes par session et plage de tours",
-            "Suivi des gommes, longueur de relais et usure",
-            "Historique de charge et consommation d'essence",
-            "Overlay VSC Delta — gestion de l'ecart en temps reel pendant la voiture de securite virtuelle",
-            "Journal de penalites et d'evenements drapeaux par session",
-            "Conditions de session enregistrees pour reference future"
-          ],
-          screenshots: [
-            ["past_session_conditions.png", "Conditions — timeline meteo et regles de session"],
-            ["vsc_delta_orange.png", "VSC Delta — gestion de l'ecart en direct pendant la safety car"]
-          ]
+          link: ["privacy.html", "Lire la politique de confidentialité"]
         }
       ],
-      roadmap: [
-        ["Analyse apres session", "Comparaisons plus structurees par piste, reglages, pneus et meteo."],
-        ["Synchro nuage", "Synchronisation optionnelle pour garder le journal sur plusieurs appareils."],
-        ["Plus de jeux", "Ajout d'autres titres quand la telemetrie le permet de facon fiable."],
-        ["Intelligence de muret des puits", "Les fonctions avancees de coaching et strategie resteront clairement marquees comme feuille de route jusqu'a leur sortie."]
+      alsoTitle: "Aussi inclus",
+      also: [
+        ["Conseils de course", "Technique de pilotage, art de la course et règlements — des lectures courtes et pratiques."],
+        ["Démos", "Découvrez Jax Max Delta avec les démos intégrées, sans jeu en marche."],
+        ["Vos unités", "km/h ou mi/h, °C ou °F."],
+        ["Trois langues", "Anglais, français et espagnol dans toute l'app."]
+      ],
+      futureKicker: "Feuille de route",
+      futureTitle: "Ce que nous explorons ensuite",
+      futureIntro: "Des orientations, pas des promesses. Rien ici n'a de date, et un élément ne rejoint la liste ci-dessus qu'une fois livré.",
+      future: [
+        ["Vue week-end de course", "Essais, qualifications et course reliés en une seule histoire."],
+        ["Progression dans le temps", "Tendances sur de nombreuses sessions : rythme, constance, gestion des pneus."],
+        ["Conseils pneus plus riches", "Un contexte de stratégie qui tient compte des gommes."],
+        ["Android", "À l'étude; non disponible pour l'instant."]
       ]
     },
     how: {
-      title: "Comment utiliser Jax",
-      intro: "Configurez la telemetrie une fois, gardez votre telephone ou tablette sur le meme reseau, et utilisez Jax comme second ecran, couche d'alertes vocales et memoire de session.",
-      sections: [
+      title: "Comment fonctionne Jax Max Delta",
+      intro: "Configurez la télémétrie une seule fois. Ensuite, préparez, pilotez et analysez — avec votre iPhone ou iPad sur le même réseau que votre console ou votre PC.",
+      phaseLabels: { before: "Avant", during: "Pendant", after: "Après", setup: "Configuration" },
+      steps: [
         {
-          kicker: "Demarrage",
-          title: "Demarrer l'application",
-          intro: "Installez Jax et ouvrez-le avant d'entrer en piste. L'ecran d'accueil propose deux options : demarrer une session en direct ou consulter l'historique des sessions.",
-          steps: [
-            ["Installer Jax", "Installez Jax Max Delta via TestFlight ou l'App Store, puis ouvrez-le sur votre iPhone ou iPad avant d'aller en piste."],
-            ["Entrer en session live", "Appuyez sur Entrer en session live pour ouvrir l'ecran de connexion. Jax commence immediatement a ecouter la telemetrie de votre jeu."],
-            ["Consulter les sessions passees", "Appuyez sur Historique des sessions pour naviguer dans vos sessions enregistrees, reglages, traces de tours, conditions et journaux d'evenements."]
-          ],
-          portrait: true,
-          screenshots: [["main_screen.png", "Ecran d'accueil — Entrer en session live ou Historique des sessions"]]
+          phase: "setup",
+          title: "Installer et ouvrir Jax Max Delta",
+          body: "Installez JMD sur votre iPhone ou votre iPad. Une courte visite guidée présente l'essentiel au premier lancement — vous pourrez la revoir plus tard depuis les Réglages. Aucun compte requis.",
+          shot: "home"
         },
         {
-          kicker: "Configuration UDP",
-          title: "Configurer UDP et Jax",
-          intro: "Jax recoit la telemetrie de votre jeu via votre reseau Wi-Fi local en utilisant le protocole UDP. Cette configuration ne se fait qu'une seule fois.",
-          steps: [
-            ["Meme reseau", "Connectez votre console ou PC et votre iPhone ou iPad au meme reseau Wi-Fi local ou segment reseau."],
-            ["Trouver l'IP de votre appareil", "Sur iPhone ou iPad : Reglages → Wi-Fi → appuyez sur votre reseau pour voir votre adresse IP locale. Vous en aurez besoin dans le jeu."],
-            ["Activer UDP dans le jeu", "Dans votre jeu EA SPORTS F1, ouvrez Reglages → Parametres de telemetrie et activez la sortie UDP."],
-            ["Definir la destination", "Entrez l'adresse IP de votre appareil comme destination de telemetrie. Reglez le port UDP sur 20777."],
-            ["Confirmer dans Jax", "L'ecran Session live affiche En ecoute sur 0.0.0.0:20777. Des que le jeu envoie des donnees, le type de session et le circuit sont detectes automatiquement et le bouton Ouvrir le tableau de bord s'active."]
-          ],
-          portrait: true,
-          screenshots: [["waiting_for_live_session.png", "Ecran Session live — en ecoute de la telemetrie sur le port 20777"]]
-        },
-        {
-          kicker: "Donnees en direct",
-          title: "Tableau de bord principal",
-          intro: "Le tableau de bord affiche les donnees de course en temps reel en trois panneaux. Gardez l'appareil visible pres de votre volant pour lire les infos sans quitter la piste des yeux.",
-          steps: [
-            ["Panneau gauche — etat de la voiture", "Temperatures et usure des pneus sur les quatre roues (FL/FR/RL/RR), repartition de freinage (BB), differentiel (DIFF), angle d'aileron (WING), degats (DMG), temperature d'air et de piste."],
-            ["Panneau central — drapeau et tour", "Etat du drapeau (VERT/JAUNE/SC/VSC), type de tour (Outlap, Flying, Pit), numero de tour, vitesse en km/h et barre ERS ou boost."],
-            ["Panneau droit — chronos", "Tours d'essence restants (positif = surplus), tour actuel (NOW), dernier tour (LAST), meilleur personnel (BEST), plus rapide de la session (FASTEST) et secteurs S1/S2/S3."],
-            ["Barre superieure", "Position, compteur de tours, usure pneu par roue en un coup d'oeil et delta par rapport au leader ou a la reference."]
-          ],
-          legend: [
-            ["BB", "Repartition de freinage — avant/arriere (%)"],
-            ["DIFF", "Differentiel — acceleration/deceleration (%)"],
-            ["FL/FR", "Temp + usure pneu avant gauche/droit"],
-            ["RL/RR", "Temp + usure pneu arriere gauche/droit"],
-            ["WING", "Angle d'aileron avant"],
-            ["DMG", "Degats carrosserie (%)"],
-            ["AIR", "Temperature de l'air"],
-            ["TRK", "Temperature de la piste"],
-            ["ERS", "Energie — niveau de charge / mode"],
-            ["DRS", "Systeme de reduction de trainee — actif / inactif"],
-            ["FUEL", "Tours d'essence restants (+ = surplus)"],
-            ["PIT", "Fenetre d'arret / numero d'arret"],
-            ["PEN", "Penalite en secondes"],
-            ["W%", "Intensite de la pluie / meteo"],
-            ["SC", "Safety Car en piste"],
-            ["VSC", "Voiture de securite virtuelle active"],
-            ["S1/S2/S3", "Temps de secteur 1, 2, 3"]
-          ],
-          screenshots: [
-            ["main_dash_yellow.png", "Tableau de bord — drapeau jaune a Catalunya"],
-            ["main_dash_green.png", "Tableau de bord — tour lance avec boost ERS actif"]
+          phase: "setup",
+          title: "Configurer la télémétrie UDP",
+          body: "JMD reçoit la télémétrie de votre jeu sur votre réseau local. La configuration se fait une seule fois dans le jeu.",
+          list: [
+            "Connectez votre console ou votre PC et votre iPhone ou iPad au même réseau local.",
+            "Dans JMD, ouvrez Réglages, onglet RÉGLAGES, pour voir l'adresse IP de cet appareil et le port UDP écouté par JMD (20777 par défaut).",
+            "Dans votre jeu EA SPORTS F1, ouvrez les paramètres de télémétrie, activez la télémétrie UDP et entrez cette adresse IP et ce port.",
+            "JMD détecte automatiquement le format de télémétrie du jeu dès la réception des premiers paquets."
           ]
         },
         {
-          kicker: "Muret des puits",
-          title: "Muret des puits",
-          intro: "Le muret des puits offre une vue complete de la course en six onglets. Accedez-y depuis le tableau de bord ou depuis l'ecran d'accueil.",
-          tabs: ["TIMING", "MAP", "TRACE", "SETUP", "GAME", "COACH"],
-          steps: [
-            ["Timing", "Classement complet : position, pilote, meilleur tour, ecart au leader, secteurs, tour en cours, gomme et statut de relais pour chaque voiture."],
-            ["Map", "Carte du circuit en direct avec la position de chaque voiture mise a jour en temps reel."],
-            ["Trace", "Acceleration, freinage et direction traces tour par tour. Selectionnez un tour pour l'analyser, ou comparez deux tours pour trouver un delta."],
-            ["Setup", "Les valeurs de reglage de votre voiture pour reference pendant la session. Un overlay VSC Delta s'affiche automatiquement lors des periodes VSC."],
-            ["Game", "Telemetrie et metadonnees de session au niveau du jeu."],
-            ["Coach", "Fiches techniques : Entree en virage, Sortie de virage, Defense, Conduite sous la pluie, ERS et DRS — des rappels pour les moments critiques."]
-          ],
-          screenshots: [
-            ["pit_wall_timing_1.png", "Timing — classement avec ecarts et gommes"],
-            ["pit_wall_map_monaco.png", "Map — positions en direct a Monaco"],
-            ["pit_wall_trace_1.png", "Trace — comparaison de tours avec acceleration et freinage"],
-            ["pit_wall_coach_1.png", "Coach — fiches techniques pour les virages et l'ERS"]
-          ]
+          phase: "before",
+          title: "Préparer la session",
+          body: "Facultatif, mais utile. Ouvrez Préparer la session depuis l'accueil, choisissez le circuit et la voiture, puis étudiez la piste — ou passez à la vue session pour planifier les essais, les qualifications ou la course.",
+          shot: "prepare"
         },
         {
-          kicker: "Historique",
-          title: "Sessions passees",
-          intro: "Chaque session terminee est sauvegardee automatiquement. Ouvrez l'historique depuis l'ecran d'accueil pour revoir n'importe quelle course, qualif ou practice.",
-          tabs: ["OVERVIEW", "RESULT", "SETUP", "CONDITIONS", "HIGHLIGHTS"],
-          steps: [
-            ["Overview", "Nom du circuit, type de session, formule, heures de debut et de fin, duree, tours completes et ligue ou saison associee."],
-            ["Result", "Votre position finale, meilleur tour et resume de course."],
-            ["Setup", "Les reglages nommes utilises pendant la session, organises par plage de tours — aileron, differentiel, repartition de freinage, hauteur de caisse et pressions de pneus."],
-            ["Conditions", "Regles de session capturees au moment de la course : difficulte IA, degats, collisions, safety car, parc ferme et timeline meteo par plage de tours."],
-            ["Highlights", "Journal chronologique des evenements : note de depart Jax, meilleurs tours (vous ou le peloton), arrets aux stands, changements de reglages, penalites, degats et evenements rivaux."]
-          ],
-          screenshots: [
-            ["past_session_highlights.png", "Highlights — journal d'evenements a Monza"],
-            ["past_session_setups.png", "Setup — reglages nommes par plage de tours"],
-            ["past_session_conditions.png", "Conditions — regles de session et timeline meteo"],
-            ["Past_session_overview.png", "Overview — resume complet de session"]
-          ]
+          phase: "during",
+          title: "Lancer la session et se connecter",
+          body: "Ouvrez le Tableau de bord, puis prenez la piste. JMD attend la télémétrie et se connecte dès que votre jeu commence à l'envoyer."
         },
         {
-          kicker: "Configuration",
-          title: "Parametres",
-          intro: "Appuyez sur l'icone engrenage depuis l'ecran d'accueil pour acceder aux parametres. Les zones cles sont le guide des abreviations, les alertes vocales Jax et la configuration UDP.",
-          steps: [
-            ["Guide des abreviations", "L'onglet Plus affiche la signification de chaque abreviation du tableau de bord — BB, DIFF, W, PEN, SC, VSC, ERS, DRS — pour qu'aucun indicateur ne reste mysterieux."],
-            ["Alertes vocales Jax", "Dans l'onglet Jax, choisissez quelles categories d'alertes entendre : pneus, essence, delta, penalites, drapeaux et evenements. Ajustez le volume et les seuils par categorie."],
-            ["Port UDP", "Le port par defaut est 20777. Si votre version du jeu utilise un port different, mettez-le a jour ici. L'adresse d'ecoute actuelle est affichee sur l'ecran Session live."],
-            ["Depannage audio", "Si les alertes vocales ne se lancent pas, verifiez que le mode silence est desactive, que le volume de l'app n'est pas a zero et que les categories d'alertes sont activees dans les parametres Jax."]
-          ],
-          portrait: true,
-          screenshots: [["IMG_8682.png", "Parametres — guide du tableau de bord et informations UDP"]]
+          phase: "during",
+          title: "Piloter avec le tableau de bord",
+          body: "Placez votre appareil là où vous pouvez le lire d'un coup d'œil. La légende intégrée explique chaque abréviation du tableau de bord.",
+          shot: "dashboard"
+        },
+        {
+          phase: "during",
+          title: "Laisser Jax faire les annonces",
+          body: "Choisissez la voix de Jax et les catégories à entendre dans Réglages, onglet JAX. En pleine session, le bouton Jax du mur des stands vous permet de les ajuster sans quitter la voiture."
+        },
+        {
+          phase: "during",
+          title: "Ouvrir le mur des stands au besoin",
+          body: "Touchez la poignée du mur des stands sur le tableau de bord pour voir les chronos, la carte en direct, votre voiture, les traces, les réglages et les détails de la session. Touchez à nouveau pour revenir au tableau de bord.",
+          shot: "pitWallTiming"
+        },
+        {
+          phase: "after",
+          title: "Terminer la session",
+          body: "À la fin d'une session, JMD la reconnaît et l'enregistre dans l'historique des sessions. Après une course, il vous indique votre position finale et vous permet de corriger la façon dont la course s'est terminée au besoin. Si la télémétrie s'arrête avant la fin évidente de la session, JMD vous pose la question."
+        },
+        {
+          phase: "after",
+          title: "Analyser dans l'historique des sessions",
+          body: "Ouvrez l'historique des sessions depuis l'accueil pour retrouver n'importe quelle session enregistrée. Chaque analyse s'adapte au type de session : le rythme pour les essais et les qualifications, toute l'histoire pour les courses.",
+          shot: "sessionHistory"
+        },
+        {
+          phase: "after",
+          title: "Revoir votre course",
+          body: "Pour les courses et les courses sprint, ouvrez la session dans l'historique pour lancer Race Replay : la tour de chronométrage, les écarts, les pneus et les événements de course, tour par tour.",
+          shot: "raceReplayLandscape"
+        },
+        {
+          phase: "setup",
+          title: "Gérer les réglages, les données et la sauvegarde",
+          body: "L'onglet ASSISTANCE des Réglages regroupe l'enregistrement et la conservation des données, la sauvegarde iCloud (sauvegarder maintenant, restaurer) et les démos intégrées. L'onglet LEGAL donne accès aux conditions et à la politique de confidentialité."
         }
       ],
-      troubleTitle: "Depannage courant",
+      troubleTitle: "Dépannage",
       trouble: [
-        ["Aucune telemetrie recue", "Verifiez que la telemetrie UDP est activee dans le jeu, que l'adresse IP est celle de l'appareil, que les deux appareils sont sur le meme reseau et que le port est 20777."],
-        ["Donnees coupees en session", "Verifiez que l'appareil est reste sur Wi-Fi, que le mode economie d'energie n'a pas interrompu l'app et que la console n'a pas change de reseau."],
-        ["Mauvaise adresse IP", "L'adresse IP du telephone ou de la tablette peut changer entre les sessions. Revoyez les reglages Wi-Fi et mettez a jour la destination de telemetrie dans le jeu si necessaire."],
-        ["Alertes vocales muettes", "Verifiez le volume, le mode silencieux, les reglages audio de l'app et les categories d'alertes activees dans les parametres Jax."]
+        ["Aucune télémétrie reçue", "Vérifiez que la télémétrie UDP est activée dans le jeu, que l'adresse IP correspond à celle affichée dans l'onglet RÉGLAGES de JMD, que le port correspond et que les deux appareils sont sur le même réseau."],
+        ["Les données s'arrêtent en pleine session", "Assurez-vous que l'appareil est resté connecté au Wi-Fi, que le mode économie d'énergie n'a pas interrompu l'app et que la console n'a pas changé de réseau."],
+        ["L'adresse IP a changé", "Les adresses IP locales peuvent changer d'une session à l'autre. Revérifiez l'onglet RÉGLAGES dans JMD et mettez à jour les paramètres de télémétrie du jeu au besoin."],
+        ["Jax reste muet", "Vérifiez le volume et le mode silencieux de l'appareil, puis assurez-vous que la voix de Jax et les catégories voulues sont activées dans l'onglet JAX des Réglages ou avec le bouton Jax du mur des stands."],
+        ["Pas de Race Replay pour une session", "Race Replay est offert pour les courses et les courses sprint captées avec assez de détails. Les essais, les qualifications et le contre-la-montre ont leur propre analyse, axée sur le rythme."],
+        ["Certaines valeurs manquent", "Les sessions de jeu n'envoient pas toutes chaque champ. JMD affiche les données manquantes comme manquantes plutôt que de deviner."]
       ]
     },
     support: {
-      title: "Support Jax Max Delta", intro: "Aide de configuration, FAQ, problemes connus et retour des testeurs.",
-      faqTitle: "FAQ", faq: [["Jax fonctionne-t-il sur console ?", "Oui. Jax est pense pour les pilotes console. Il faut un jeu qui envoie une telemetrie compatible et un appareil sur le meme reseau."], ["Jax est-il officiel ou affilie ?", "Non. Jax Max Delta est independant et utilise les donnees de telemetrie disponibles dans les jeux compatibles."], ["Est-ce seulement un tableau de bord ?", "Non. Jax est aussi votre equipe virtuelle au muret des puits, votre couche d'alertes vocales, votre ingenieur de course personnel et votre carnet de course."], ["Ou sont mes donnees ?", "Sur votre appareil. L'historique de sessions, les traces de tour et les reglages restent dans le stockage prive de l'app. Si iCloud est disponible, l'app peut aussi sauvegarder votre historique et vos ligues dans votre propre conteneur iCloud prive, que nous ne pouvons pas lire."], ["Comment envoyer un retour ?", "Envoyez l'appareil, le jeu, la plateforme, le type de session et ce qui s'est passe a support@jaxmaxdelta.com."]],
-      knownTitle: "Problemes connus", known: ["Aucune donnee UDP recue parce que la telemetrie est desactivee dans le jeu.", "Telephone ou tablette pas sur le meme reseau que la console ou le PC.", "Adresse IP, port ou format UDP incorrect dans les reglages du jeu.", "Alertes vocales muettes a cause du volume, du mode silencieux ou des categories d'alertes."],
-      feedbackTitle: "Retour des testeurs", feedbackBody: "Un bon rapport inclut jeu, plateforme, appareil, version de l'app, reglages de telemetrie et resultat attendu."
+      title: "Soutien pour Jax Max Delta",
+      intro: "De l'aide pour la configuration, des réponses aux questions fréquentes et un moyen direct de nous joindre.",
+      faqTitle: "FAQ",
+      faq: [
+        ["Jax Max Delta fonctionne-t-il sur console?", "Oui. JMD est conçu en pensant aux pilotes sur console. Votre jeu doit envoyer la télémétrie UDP, et votre iPhone ou iPad doit être sur le même réseau local que votre PlayStation, votre Xbox ou votre PC."],
+        ["Quels jeux sont pris en charge?", "EA SPORTS F1 24, F1 25 et F1 26, par la sortie de télémétrie UDP du jeu."],
+        ["Est-ce offert sur Android?", "Pas encore. Jax Max Delta fonctionne actuellement sur iPhone et iPad."],
+        ["Jax est-il officiellement affilié à EA, F1, Codemasters, Fanatec, PlayStation ou Xbox?", "Non. Jax Max Delta est indépendant et utilise les données de télémétrie des jeux compatibles lorsqu'elles sont disponibles."],
+        ["Est-ce seulement un tableau de bord de télémétrie?", "Non. Le tableau de bord en direct n'en est qu'une partie. JMD vous aide aussi à préparer une session, vous offre les annonces vocales de Jax et un mur des stands complet pendant que vous pilotez, puis conserve votre historique, vos réglages, vos traces de tour et Race Replay après la session."],
+        ["Pourquoi n'y a-t-il pas de Race Replay pour certaines sessions?", "Race Replay est offert pour les courses et les courses sprint captées avec assez de détails. Les essais, les qualifications et le contre-la-montre ont leur propre analyse, axée sur le rythme."],
+        ["Où sont stockées mes données?", "Sur votre appareil. L'historique des sessions, les traces de tour et les réglages restent dans le stockage privé de l'app. Si iCloud est disponible, l'app peut aussi sauvegarder votre historique et vos ligues dans votre propre conteneur iCloud privé, que nous ne pouvons pas lire. Consultez la politique de confidentialité pour les détails."],
+        ["Où puis-je le télécharger?", "Jax Max Delta se prépare à sa sortie sur l'App Store. Le lien de téléchargement apparaîtra sur ce site dès qu'il sera disponible."],
+        ["Comment envoyer des commentaires comme testeur?", "Envoyez le modèle de l'appareil, le jeu, la console ou le PC, le type de session et ce qui s'est passé à support@jaxmaxdelta.com."]
+      ],
+      knownTitle: "Problèmes courants",
+      known: [
+        "Aucune donnée UDP reçue parce que la sortie de télémétrie est désactivée dans le jeu.",
+        "Le téléphone ou la tablette n'est pas sur le même réseau que la console ou le PC.",
+        "Mauvaise adresse IP, mauvais port ou mauvais format de télémétrie UDP dans le jeu.",
+        "Les alertes vocales ne jouent pas à cause du volume, du mode silencieux ou des catégories d'alertes."
+      ],
+      feedbackTitle: "Contact et commentaires",
+      feedbackBody: "Un bon rapport inclut votre jeu, votre plateforme, votre appareil, la version de l'app, vos réglages de télémétrie et une courte description de ce que vous attendiez par rapport à ce qui s'est passé."
     },
-    privacy: null, terms: null, roadmap: null, blog: null
+    roadmap: {
+      title: "Feuille de route",
+      intro: "Ce que Jax Max Delta offre aujourd'hui, et les pistes que nous explorons ensuite. Les éléments futurs n'ont pas de date et peuvent changer.",
+      groups: [
+        ["Disponible maintenant · R1", [
+          "Préparer la session : carte du circuit, virages, pneus, réglages et contexte de session",
+          "Tableau de bord en direct",
+          "Annonces vocales et coaching contextuel de Jax, réglables en pleine session",
+          "Mur des stands : chronos, carte en direct, état de la voiture, traces de tour, réglages et détails du jeu et de la session",
+          "Historique des sessions, adapté au type de session",
+          "Race Replay pour les courses et les courses sprint",
+          "Traces de tour et comparaison de tours",
+          "Suivi des réglages et bibliothèque de réglages par circuit",
+          "Contexte pneus, carburant et course",
+          "Gestion de l'énergie de F1 26",
+          "Gestion du DRS, de la voiture de sécurité, du VSC et du drapeau rouge",
+          "Sauvegarde iCloud privée de l'historique des sessions",
+          "Conseils de course et démos intégrées",
+          "Anglais, français et espagnol"
+        ]],
+        ["Prochainement · Raffinement", [
+          "Améliorations guidées par les commentaires des premiers utilisateurs",
+          "Couverture de préparation élargie à plus de combinaisons circuit et voiture",
+          "Plus de façons de comparer les sessions selon le circuit, les réglages et les conditions"
+        ]],
+        ["À l'étude · Futur", [
+          "Une vue week-end de course : essais, qualifications et course en une seule histoire",
+          "Une analyse de type reprise pour les essais et les qualifications",
+          "Tendances de progression sur de nombreuses sessions",
+          "Conseils de stratégie pneus plus riches, selon la gomme",
+          "Android",
+          "D'autres jeux de course lorsque la télémétrie est fiable"
+        ]]
+      ]
+    },
+    privacy: null, terms: null, blog: null
   },
   es: {
-    meta: { title: "Jax Max Delta - Equipo virtual en el muro de pits para sim racers", description: "Jax Max Delta convierte tu telefono o tablet en datos de carrera, alertas de voz, memoria de sesiones y apoyo de muro de pits." },
-    nav: { home: "Inicio", features: "Funciones", how: "Como usar", support: "Soporte", blog: "Blog", roadmap: "Roadmap", privacy: "Privacidad", terms: "Terminos" },
-    common: { parent: "Camilore", app: "Jax Max Delta", eyebrow: "App companera de sim racing", ctaJoin: "Unirse a TestFlight", ctaTry: "Probar Jax", ctaFeatures: "Ver funciones", ctaHow: "Aprender como funciona", ctaBlog: "Leer el blog", ctaSupport: "Contactar soporte", placeholder: "Enlace temporal - actualizar cuando el link final de App Store o TestFlight este listo.", disclaimer: "Jax Max Delta es una app independiente para sim racing y no esta afiliada ni respaldada por EA, Codemasters, Formula 1, FIA, Microsoft, Sony, Fanatec ni ninguna otra marca mencionada.", footerLead: "Tu equipo virtual en el muro de pits, ingeniero de carrera personal y diario de carreras.", readPost: "Leer articulo" },
+    nav: {
+      home: "Inicio",
+      features: "Funciones",
+      how: "Cómo funciona",
+      support: "Soporte",
+      blog: "Blog",
+      roadmap: "Hoja de ruta",
+      privacy: "Privacidad",
+      terms: "Términos"
+    },
+    common: {
+      parent: "Camilore",
+      app: "Jax Max Delta",
+      eyebrow: "Compañero de sim racing para iPhone y iPad",
+      skip: "Ir al contenido",
+      menu: "Menú",
+      language: "Idioma",
+      storeSoon: "Próximamente en el App Store",
+      storeCta: "Descargar en el App Store",
+      testflightCta: "Unirse a la beta de TestFlight",
+      ctaFeatures: "Ver funciones",
+      ctaHow: "Ver cómo funciona",
+      ctaSupport: "Contactar con soporte",
+      ctaPrivacy: "Leer la política de privacidad",
+      ctaReplay: "Más sobre Race Replay",
+      shotSoon: "Captura de pantalla actual próximamente",
+      available: "Disponible ahora",
+      disclaimer: "Jax Max Delta es una app independiente de sim racing y no está afiliada ni respaldada por EA, Codemasters, Formula 1, FIA, Microsoft, Sony, Fanatec ni ninguna otra marca mencionada.",
+      footerLead: "Tu ingeniero de carrera, tu muro de boxes y tu memoria de carrera — para pilotos de F1 virtual en iPhone y iPad.",
+      footerProduct: "Producto",
+      footerHelp: "Ayuda y legal",
+      readPost: "Leer artículo"
+    },
+    shots: {
+      home: "Inicio",
+      prepare: "Preparar sesión",
+      dashboard: "Panel en vivo",
+      pitWallTiming: "Muro de boxes — Tiempos",
+      pitWallMap: "Muro de boxes — Mapa",
+      pitWallGame: "Muro de boxes — Juego",
+      sessionHistory: "Historial de sesiones",
+      raceResults: "Resultados de carrera",
+      raceReplayPortrait: "Race Replay",
+      raceReplayLandscape: "Race Replay"
+    },
     home: {
-      kicker: "Segunda pantalla. Alertas de voz. Muro de pits.", title: "Tu equipo virtual en el muro de pits.", position: "Jax Max Delta convierte tu telefono o tablet en los datos de carrera, alertas de voz, memoria de sesiones y apoyo de estrategia que le falta a tu cockpit.", intro: "Corre con mas que un tablero. Jax une telemetria en vivo, alertas de voz estilo ingeniero, historial de sesiones, memoria de setups e insights de carrera para que te sientas apoyado en cada vuelta.",
-      telemetry: [["Delta", "-0.284"], ["Neumaticos", "Medio 41 %"], ["Combustible", "+1.8 vueltas"], ["Proxima alerta", "Ventana de parada"]],
-      whoTitle: "Para quien es Jax", whoIntro: "Jax resuelve problemas reales de sim racing, especialmente en consola cuando la vista cockpit o el volante ocultan informacion critica.",
-      who: [["El volante tapa el dashboard", "Lleva los datos clave a una segunda pantalla sin cambiar la camara."], ["Pilotos de consola", "Pensado para Xbox y PlayStation con telemetria de juegos compatibles."], ["Pilotos de liga", "Guarda historial de sesiones, setups, neumaticos, combustible, penalizaciones, clima y progreso."], ["Pilotos que buscan consistencia", "Usa la memoria de sesiones para recordar que funciono en cada circuito."]],
-      benefitsTitle: "Corre con un equipo", benefitsIntro: "Del cockpit al muro de pits y a la revision post-sesion, Jax te ayuda a correr mejor y recordar que funciono.",
-      benefits: [["El equipo que le falta a tu cockpit", "La informacion critica queda visible en telefono o tablet cuando el volante bloquea el HUD."], ["Tu ingeniero en el oido", "Las alertas de voz pueden avisar sobre neumaticos, combustible, deltas, penalizaciones y eventos sin prometer estrategia automatica."], ["Tu cuaderno de equipo", "Guarda notas, setups, compuestos y resultados para aprender de una carrera a otra."]],
-      featuresTitle: "Lo que hace Jax", featuresIntro: "Dashboard en vivo, alertas de voz, contexto de muro de pits, historial de sesiones, memoria de setups y neumaticos, y herramientas para mejorar con el tiempo.",
-      pillars: [["Live Dashboard", "Datos de carrera en tu telefono o tablet cuando el volante o cockpit tapa el display del juego."], ["Jax Voice Alerts", "Alertas estilo ingeniero para momentos en los que no deberias apartar la vista de la pista."], ["Equipo virtual en el muro de pits", "El equipo que le falta a tu cockpit: contexto, recordatorios y apoyo sin prometer estrategia automatizada."], ["Historial de sesiones", "Un registro post-sesion con vueltas, notas, eventos y progreso."], ["Memoria de setups y neumaticos", "Recuerda que setup, compuesto y stint funcionaron en cada pista."], ["Mejorar con el tiempo", "Convierte cada sesion en conocimiento para el siguiente fin de semana."]],
-      earlyTitle: "Acceso anticipado", earlyBody: "Jax esta creciendo desde dashboard de segunda pantalla hacia equipo virtual en el muro de pits, ingeniero de carrera personal y diario completo. Los enlaces TestFlight y App Store son temporales hasta tener links finales.",
-      supportedTitle: "Juegos y plataformas", supportedBody: "Jax funciona con datos de telemetria de juegos compatibles. El foco actual son titulos EA SPORTS F1 con telemetria UDP en iPhone y iPad, incluyendo consolas en la misma red local.",
-      quickLinksTitle: "Seguir explorando", quickLinks: [["Funciones", "Dashboard, alertas de voz, muro de pits virtual, setups, neumaticos, combustible, penalizaciones, banderas, clima y diario.", "features.html"], ["Como usar", "Configura UDP, conecta el dispositivo y resuelve problemas comunes.", "how-to.html"], ["Soporte", "FAQ, problemas conocidos, feedback de testers y contacto.", "support.html"], ["Privacidad", "Detalles claros sobre telemetria, almacenamiento en el dispositivo, copia en iCloud y lo que nunca sale de tu telefono.", "privacy.html"]]
+      titleLines: ["Tu ingeniero de carrera.", "Tu muro de boxes.", "Tu memoria de carrera."],
+      lead: "Jax Max Delta convierte la telemetría de F1 en vivo en la información, el coaching, el contexto de carrera y el historial que necesitas — antes, durante y después de cada sesión.",
+      visualLabel: "Ilustración de una traza de vuelta en tres sectores",
+      proof: ["iPhone y iPad", "EA SPORTS F1 24 · F1 25 · F1 26", "Telemetría UDP local", "PlayStation · Xbox · PC", "Sin cuenta", "English · Français · Español"],
+      phasesKicker: "Antes · Durante · Después",
+      phasesTitle: "Un solo compañero para toda la sesión.",
+      phasesIntro: "Jax Max Delta te acompaña de principio a fin: lo que debes saber antes de salir del garaje, lo que importa mientras conduces y lo que realmente pasó cuando todo termina.",
+      phases: [
+        ["Antes", "Preparar", "Elige el circuito y el coche, y estudia el trazado, las curvas, los neumáticos, las notas de reglaje y tu propio historial allí.", "#prepare"],
+        ["Durante", "Competir", "Un panel en vivo, Jax por radio y un muro de boxes completo — legibles de un vistazo en tu teléfono o tablet.", "#race"],
+        ["Después", "Analizar", "Cada sesión guardada en tu dispositivo: resultados, reglajes, condiciones, trazas de vuelta — y la repetición de cómo se desarrolló la carrera.", "#review"]
+      ],
+      prepare: {
+        kicker: "Antes · Preparar sesión",
+        title: "Conoce el circuito antes de salir a pista.",
+        body: "Preparar sesión reúne el conocimiento del circuito y tu propio historial. Elige la pista y el coche, y repasa lo que importa para la próxima sesión — libres, clasificación, sprint o carrera.",
+        items: [
+          "Mapa interactivo del circuito con curvas numeradas",
+          "Notas por curva — marcha, velocidad, frenada y vértice cuando hay datos",
+          "Contexto del pit lane, speed trap, DRS y gestión de energía",
+          "Neumáticos y reglajes a tener en cuenta para el coche elegido",
+          "Duración de carrera, clima y contexto de Safety Car",
+          "Tus sesiones y reglajes anteriores en ese circuito"
+        ],
+        note: "Los datos de preparación varían según el circuito y el coche. JMD muestra lo que tiene para la combinación que elijas y te avisa cuando algo no está disponible."
+      },
+      race: {
+        kicker: "Durante · Panel en vivo",
+        title: "Todo lo que el cockpit oculta, de un vistazo.",
+        body: "Coloca tu iPhone o iPad junto al volante y mantén a la vista los datos que importan — sin cambiar de cámara ni saturar el HUD del juego.",
+        items: [
+          "Posición, vuelta, velocidad, marcha, acelerador y freno",
+          "Tiempos por vuelta, por sector y delta",
+          "Compuesto, desgaste y temperaturas de neumáticos",
+          "Temperaturas de frenos y motor",
+          "Combustible, ERS — incluida la gestión de energía de F1 26 — y DRS",
+          "Banderas, Safety Car, VSC, paradas y penalizaciones",
+          "Daños en alerones, clima y contexto de sesión"
+        ],
+        jaxKicker: "Jax · Voz",
+        jaxTitle: "Jax, por radio.",
+        jaxBody: "Jax es la voz de tu ingeniero de carrera: mensajes breves y oportunos sobre lo que acaba de cambiar, para que no apartes la vista de la pista. Elige qué categorías quieres oír — y ajústalas en plena sesión con el botón Jax del muro de boxes.",
+        jaxItems: ["Neumáticos y combustible", "Tiempos, delta y diferencias", "Banderas, Safety Car y VSC", "Penalizaciones y dirección de carrera", "Recordatorios y coaching según el contexto"],
+        jaxNote: "Jax informa y recuerda. La conducción — y las decisiones de estrategia — siguen siendo tuyas."
+      },
+      pitWall: {
+        kicker: "Durante · Muro de boxes",
+        title: "La vista desde el muro de boxes.",
+        body: "Cuando necesites más que el panel, abre el muro de boxes — con un toque desde el panel o directamente desde Inicio. Toda la parrilla, todo el circuito y tu propio coche en una sola vista horizontal.",
+        items: [
+          "Torre de tiempos: posiciones, diferencias, sectores y neumáticos",
+          "Mapa del circuito en vivo con todos los coches",
+          "Tu tabla vuelta a vuelta y el estado de tu coche",
+          "Trazas de vuelta con mandos, ERS y DRS, y comparación de vueltas",
+          "Reglajes de la sesión y configuración del juego y la sesión"
+        ]
+      },
+      replay: {
+        kicker: "Después · Race Replay",
+        title: "Vuelve a vivir tu carrera.",
+        body: "Race Replay reconstruye una carrera a partir de la telemetría que JMD captó y la reproduce vuelta a vuelta: la torre de tiempos reordenándose, las diferencias abriéndose y cerrándose, los cambios de neumáticos y los momentos que la decidieron.",
+        items: [
+          "Torre de tiempos con abreviaturas de pilotos, posiciones y diferencias",
+          "Progresión vuelta a vuelta con reloj de carrera y controles de reproducción",
+          "Stints y paradas en boxes de toda la parrilla",
+          "Periodos de Safety Car, VSC y bandera roja",
+          "Abandonos y un ticker de eventos de carrera",
+          "Una clasificación reconstruida cuando el juego no envió resultados finales"
+        ],
+        note: "Race Replay trabaja con los datos que tu dispositivo recibió durante la carrera. Si el juego no envía una clasificación final, JMD reconstruye el resultado a partir de los tiempos captados cuando hay suficientes — nunca inventa lo que no se recibió.",
+        badge: "Carreras y sprints"
+      },
+      history: {
+        kicker: "Después · Historial de sesiones",
+        title: "Un diario de carreras que se escribe solo.",
+        body: "Las sesiones completadas se guardan en tu dispositivo y se analizan según lo que fueron: los libres y la clasificación se centran en el ritmo; las carreras cuentan toda la historia.",
+        items: [
+          "Resultados y desenlace — tuyos y de la parrilla",
+          "Tiempos por vuelta y por sector, neumáticos y stints",
+          "Reglajes usados, con una biblioteca de reglajes por circuito",
+          "Clima y condiciones de la sesión",
+          "Penalizaciones, momentos destacados y eventos de carrera",
+          "Trazas de vuelta guardadas para revisar tu conducción"
+        ],
+        note: "Lo que contiene una sesión depende de lo que envió el juego. JMD completa huecos con los datos captados cuando puede, y muestra como faltantes los datos que faltan."
+      },
+      privacy: {
+        kicker: "Tus datos",
+        title: "Privado desde el diseño.",
+        body: "Jax Max Delta no tiene cuentas de usuario y no te pide información personal. Tu telemetría viaja solo por tu propia red, y tu historial se queda en tu dispositivo.",
+        points: [
+          ["Sin cuenta", "Nada que registrar y ninguna recogida de emails."],
+          ["En tu dispositivo", "Sesiones, trazas de vuelta y reglajes viven en el almacenamiento privado de la app."],
+          ["Tu propio iCloud", "Si iCloud está disponible, el historial de sesiones puede respaldarse en tu contenedor privado de iCloud — que nosotros no podemos leer."],
+          ["Sin anuncios ni rastreo", "Sin publicidad, sin identificadores publicitarios, sin seguimiento entre apps."]
+        ]
+      },
+      platforms: {
+        kicker: "Compatibilidad",
+        title: "Hecho para pilotos de F1 en consola y PC.",
+        body: "Jax Max Delta escucha la telemetría UDP que tu juego EA SPORTS F1 envía por tu red local. Tu iPhone o iPad solo necesita estar en la misma red que tu consola o PC.",
+        groups: [
+          ["Juegos", ["EA SPORTS F1 24", "EA SPORTS F1 25", "EA SPORTS F1 26"]],
+          ["Compite en", ["PlayStation", "Xbox", "PC"]],
+          ["JMD en", ["iPhone", "iPad"]]
+        ],
+        note: "Android aún no está disponible."
+      },
+      availability: {
+        kicker: "Disponibilidad",
+        soonTitle: "Próximamente en el App Store.",
+        liveTitle: "Disponible en el App Store.",
+        body: "Jax Max Delta se prepara para su lanzamiento público en iPhone y iPad. ¿Tienes preguntas o comentarios mientras tanto? Nos encantará leerte."
+      }
     },
     features: {
-      title: "Mas que un tablero.",
-      intro: "Jax Max Delta es tu display de cockpit en segunda pantalla, alertas de voz estilo ingeniero, equipo virtual en el muro de pits y cuaderno de equipo.",
-      current: "Actual y concreto",
-      future: "Roadmap futuro",
+      title: "Todo lo que Jax Max Delta hace hoy.",
+      intro: "Un compañero completo para pilotos de F1 virtual, organizado según lo que necesitas antes, durante y después de cada sesión. Todo lo que aparece en esta página está en la versión actual; el trabajo futuro se presenta aparte, al final.",
       groups: [
         {
-          title: "Dashboard en Vivo",
-          body: "Tu display de cockpit completo en una segunda pantalla. Mantén los datos criticos visibles sin cambiar la camara ni saturar el HUD del juego.",
+          id: "prepare",
+          phase: "Antes",
+          title: "Preparar sesión",
+          body: "Elige un circuito y un coche, repasa el circuito y planifica la próxima sesión. El conocimiento del circuito y tu propio historial, lado a lado.",
           items: [
-            "Velocidad, marcha, acelerador y freno en tiempo real",
-            "Temperaturas y desgaste de neumaticos en las cuatro ruedas — con advertencias de calor por color",
-            "Vueltas de combustible restantes con sobrante o deficit de un vistazo",
-            "Delta respecto al lider o vuelta de referencia",
-            "Vuelta actual, ultima vuelta, mejor personal y mas rapida de la sesion",
-            "Parciales S1/S2/S3 por vuelta",
-            "Estado de bandera, barra ERS y boost, y ventana de parada"
+            "Vista general del circuito con un mapa interactivo y curvas numeradas",
+            "Notas curva a curva: marcha, velocidad, frenada y vértice cuando hay datos",
+            "Pit lane, speed trap, zonas DRS y gestión de energía",
+            "Neumáticos y reglajes a considerar para el coche elegido",
+            "Duración de carrera, clima y contexto de Safety Car / VSC",
+            "Pautas para libres, clasificación y carrera según la sesión que planificas",
+            "Tus sesiones y reglajes anteriores en ese circuito"
           ],
-          screenshots: [
-            ["main_dash_yellow.png", "Bandera amarilla en Catalunya — dashboard completo"],
-            ["main_dash_hot_tyre.png", "Advertencia de calor en neumatico — trasero izquierdo sobrecalentado"]
+          note: "La cobertura varía según el circuito y el coche; la información que falta se indica en lugar de suponerse.",
+          shots: ["prepare"]
+        },
+        {
+          id: "dashboard",
+          phase: "Durante",
+          title: "Panel en vivo",
+          body: "Una pantalla de carrera en horizontal para tu iPhone o iPad. Mantén visible la información crítica sin cambiar de cámara ni saturar el HUD del juego.",
+          items: [
+            "Posición, vuelta, velocidad, marcha, acelerador y freno",
+            "Vuelta actual, última y mejor, parciales por sector y delta",
+            "Compuesto, desgaste y temperaturas de los cuatro neumáticos",
+            "Temperaturas de frenos y motor en la unidad que elijas",
+            "Combustible, ERS y gestión de energía de F1 26, DRS",
+            "Banderas, Safety Car, VSC, paradas y penalizaciones",
+            "Daños en alerones, clima y contexto de sesión"
+          ],
+          shots: ["dashboard"]
+        },
+        {
+          id: "jax",
+          phase: "Durante",
+          title: "Jax — la voz de tu ingeniero de carrera",
+          body: "Jax anuncia lo que cambió, cuando importa, para que mantengas la vista en la pista. Sus mensajes salen directamente de la telemetría — coherentes y predecibles, nunca improvisados.",
+          items: [
+            "Estado de neumáticos y combustible",
+            "Tiempos, delta y diferencias con los coches a tu alrededor",
+            "Banderas, Safety Car y VSC",
+            "Penalizaciones y decisiones de dirección de carrera",
+            "Clima, gestión de energía y recordatorios de estrategia",
+            "Elige categorías y voz en Ajustes, o ajústalas en plena sesión con el botón Jax del muro de boxes"
+          ],
+          note: "Jax ofrece información y recordatorios. Las decisiones de conducción y de estrategia son tuyas."
+        },
+        {
+          id: "pit-wall",
+          phase: "Durante",
+          title: "Muro de boxes virtual",
+          body: "Una vista más profunda de la carrera y la sesión en vivo. Ábrelo sobre el panel con un toque, o directamente desde Inicio.",
+          items: [
+            "Torre de tiempos: posiciones, diferencias, tiempos por vuelta y sector, neumáticos y stints",
+            "Mapa del circuito en vivo con todos los coches en pista",
+            "Tu tabla vuelta a vuelta y el estado de tu coche en vivo",
+            "Trazas de tus mandos de conducción, con comparación de vueltas",
+            "Reglajes usados en la sesión, enlazados a tu biblioteca",
+            "Configuración del juego y la sesión, con etiquetas compactas y legibles"
+          ],
+          shots: ["pitWallTiming", "pitWallMap", "pitWallGame"]
+        },
+        {
+          id: "race-replay",
+          phase: "Después",
+          title: "Race Replay",
+          body: "Revive una carrera vuelta a vuelta. JMD reconstruye la carrera a partir de la telemetría que captó y reproduce cómo se movió la parrilla, dónde cambiaron las diferencias y qué pasó por el camino.",
+          items: [
+            "Torre de tiempos con abreviaturas de pilotos, posiciones y diferencias",
+            "Progresión vuelta a vuelta con reloj de carrera y controles de reproducción",
+            "Evolución de neumáticos y stints de cada piloto",
+            "Periodos de Safety Car, VSC y bandera roja",
+            "Abandonos cuando el juego los informó",
+            "Ticker de eventos: paradas, penalizaciones, vueltas rápidas y banderas",
+            "Resultados reconstruidos cuando falta la clasificación final y se captaron suficientes tiempos"
+          ],
+          note: "Disponible para carreras y sprints. La repetición usa solo los datos que recibió tu dispositivo — no puede reconstruir lo que el juego nunca envió.",
+          shots: ["raceReplayLandscape", "raceReplayPortrait"]
+        },
+        {
+          id: "session-history",
+          phase: "Después",
+          title: "Historial de sesiones",
+          body: "Cada sesión completada se guarda en tu dispositivo. Cada análisis se adapta al tipo de sesión: libres, clasificación, contrarreloj y carreras muestran lo que importa en cada caso.",
+          items: [
+            "Desenlace, resultados de carrera y clasificación completa",
+            "Tiempos por vuelta y sector, con neumáticos y stints",
+            "Reglajes usados durante la sesión",
+            "Clima y condiciones de la sesión",
+            "Momentos destacados, penalizaciones y eventos de carrera",
+            "Estadísticas de carrera deportiva de todas tus sesiones"
+          ],
+          note: "No todas las sesiones contienen todos los campos. JMD reconstruye lo que puede de forma fiable y muestra como faltantes los datos que faltan.",
+          shots: ["sessionHistory", "raceResults"]
+        },
+        {
+          id: "lap-trace",
+          phase: "Durante y después",
+          title: "Trazas de vuelta y análisis",
+          body: "Mira cómo conduciste, no solo qué tan rápido. Las trazas se graban mientras conduces y se guardan con la sesión.",
+          items: [
+            "Acelerador, freno y dirección",
+            "Canales de velocidad, ERS y DRS",
+            "Compara una vuelta de referencia con otra vuelta",
+            "Zoom y desplazamiento a cualquier parte de la vuelta",
+            "Vuelve a ver vueltas guardadas desde el historial de sesiones"
           ]
         },
         {
-          title: "Alertas de Voz Jax",
-          body: "Tu ingeniero de carrera en el oido. Jax anuncia la informacion que necesitas en el momento justo, sin que tengas que apartar la vista de la pista.",
+          id: "setups",
+          phase: "Antes y después",
+          title: "Memoria de reglajes y neumáticos",
+          body: "Recuerda qué usaste y qué funcionó. Los reglajes se captan en tus sesiones y se reúnen en una biblioteca que puedes filtrar por circuito.",
           items: [
-            "Alertas de temperatura y desgaste de neumaticos por rueda",
-            "Alertas de delta de combustible y sugerencias de estrategia",
-            "Alertas de delta por vuelta y consistencia",
-            "Anuncios de penalizaciones y banderas",
-            "Notificaciones de entrada y salida de Safety Car y VSC",
-            "Recordatorios de ventana de parada y eventos de sesion"
-          ],
-          screenshots: [
-            ["main_dash_green.png", "Vuelta en verde — capa de alertas de voz activa"]
+            "Reglajes del coche captados en cada sesión",
+            "Biblioteca Ver reglajes, filtrable por circuito, juego y coche",
+            "Referencias de reglaje junto a tus tiempos por vuelta",
+            "Compuestos, stints y desgaste — incluida la gama de compuestos de F1 26",
+            "Combustible y contexto de carrera guardados con cada sesión"
           ]
         },
         {
-          title: "Muro de Pits Virtual",
-          body: "La vista completa de carrera que tu cockpit no tiene. Seis pestanas cubren todo lo que un muro de pits real seguiria durante la carrera.",
+          id: "data",
+          phase: "Siempre",
+          title: "Copia privada y control de tus datos",
+          body: "Sin cuenta, sin registro. Tus datos viven en tu dispositivo, bajo tu control.",
           items: [
-            "Clasificacion completa con posiciones, diferencias, parciales y compuestos",
-            "Mapa del circuito en vivo con la posicion de cada coche",
-            "Overlay VSC Delta para gestionar tu diferencia durante periodos de safety car virtual",
-            "Referencia de setup del coche para la sesion en curso",
-            "Metadatos de sesion y telemetria a nivel del juego",
-            "Fichas de tecnica de conduccion para curvas, ERS y DRS"
+            "Historial de sesiones, trazas y reglajes guardados en tu dispositivo",
+            "Copia de seguridad opcional en iCloud del historial de sesiones, en tu propio contenedor privado",
+            "Exporta tu historial de sesiones con la hoja de compartir de iOS",
+            "Elige cuánto tiempo se conservan las trazas, más pesadas",
+            "Borra sesiones individuales o todas en cualquier momento"
           ],
-          screenshots: [
-            ["pit_wall_timing_2.png", "Timing — clasificacion de carrera en Catalunya con compuestos"],
-            ["pit_wall_map_monaco.png", "Map — posiciones en vivo en Monaco"]
-          ]
-        },
-        {
-          title: "Traza y Analisis de Vuelta",
-          body: "Inspecciona tus inputs vuelta a vuelta. Ve acelerador, freno y direccion en todo el circuito, o compara dos vueltas para encontrar el delta.",
-          items: [
-            "Traza de acelerador, freno y direccion por vuelta",
-            "Traza de velocidad a lo largo de la distancia de la vuelta",
-            "Zonas de activacion de DRS y ERS por vuelta",
-            "Comparacion de delta vuelta a vuelta — selecciona dos vueltas",
-            "Zoom y desplazamiento por cualquier seccion del circuito",
-            "Vuelta mas rapida resaltada como referencia"
-          ],
-          screenshots: [
-            ["pit_wall_trace_2.png", "Trace — acelerador, freno y direccion en Catalunya"],
-            ["pit_wall_coach_1.png", "Coach — fichas de tecnica para curvas y ERS"]
-          ]
-        },
-        {
-          title: "Historial de Sesiones y Diario de Carreras",
-          body: "Cada sesion completada se guarda automaticamente. Revisa lo que paso vuelta a vuelta, como funcionaron tus setups y cuales eran las condiciones.",
-          items: [
-            "Registro cronologico de eventos: notas Jax, vueltas rapidas, paradas, cambios de setup, penalizaciones y danos",
-            "Setups con nombre por rango de vueltas con todos los parametros: alerones, diferencial, balance de freno, altura al suelo, presiones de neumaticos",
-            "Linea de tiempo del clima — condiciones y temperaturas por rango de vueltas",
-            "Reglas de sesion: dificultad IA, modo de danos, safety car, parc ferme",
-            "Resultado, vuelta rapida y resumen de carrera",
-            "Seguimiento de liga y temporada entre sesiones"
-          ],
-          screenshots: [
-            ["past_session_highlights.png", "Highlights — registro de eventos en Monza"],
-            ["past_session_setups.png", "Setup — setups con nombre por rango de vueltas"]
-          ]
-        },
-        {
-          title: "Memoria de Setup y Contexto de Carrera",
-          body: "Registra tus elecciones de setup, compuestos, cargas de combustible y condiciones de carrera en cada sesion. Construye la memoria que llevaria un cuaderno de equipo real.",
-          items: [
-            "Parametros de setup guardados por sesion y rango de vueltas",
-            "Seguimiento de compuesto de neumaticos, duracion del stint y patron de desgaste",
-            "Historial de carga y consumo de combustible",
-            "Overlay VSC Delta — gestion del delta en tiempo real durante el coche de seguridad virtual",
-            "Registro de penalizaciones y eventos de bandera por sesion",
-            "Condiciones de sesion registradas para referencia futura"
-          ],
-          screenshots: [
-            ["past_session_conditions.png", "Conditions — linea de tiempo del clima y reglas de sesion"],
-            ["vsc_delta_orange.png", "VSC Delta — gestion del delta en vivo durante el safety car"]
-          ]
+          link: ["privacy.html", "Leer la política de privacidad"]
         }
       ],
-      roadmap: [
-        ["Revision post-sesion", "Comparaciones por pista, setup, neumaticos y clima."],
-        ["Cloud sync", "Sincronizacion opcional entre dispositivos."],
-        ["Mas juegos", "Soporte para mas titulos cuando la telemetria sea confiable."],
-        ["Inteligencia de muro de pits", "Funciones futuras de coaching y estrategia se marcaran como roadmap hasta estar listas."]
+      alsoTitle: "También incluido",
+      also: [
+        ["Consejos de carrera", "Técnica de conducción, estrategia en pista y reglamento — lecturas breves y prácticas."],
+        ["Demos", "Explora Jax Max Delta con demos integradas, sin necesidad de tener el juego en marcha."],
+        ["Tus unidades", "km/h o mph, °C o °F."],
+        ["Tres idiomas", "Inglés, francés y español en toda la app."]
+      ],
+      futureKicker: "Hoja de ruta",
+      futureTitle: "Lo que estamos explorando",
+      futureIntro: "Direcciones, no promesas. Nada aquí tiene fecha, y un elemento pasa a la lista de arriba solo cuando se publica.",
+      future: [
+        ["Vista de fin de semana", "Libres, clasificación y carrera conectados en una sola historia."],
+        ["Progreso en el tiempo", "Tendencias a lo largo de muchas sesiones: ritmo, consistencia, gestión de neumáticos."],
+        ["Guía de neumáticos más completa", "Contexto de estrategia que tiene en cuenta el compuesto."],
+        ["Android", "En estudio; no disponible por ahora."]
       ]
     },
     how: {
-      title: "Como usar Jax",
-      intro: "Configura la telemetria una vez, mantén el telefono o tablet en la misma red y usa Jax como segunda pantalla, capa de alertas de voz y memoria de sesion.",
-      sections: [
+      title: "Cómo funciona Jax Max Delta",
+      intro: "Configura la telemetría una vez. Después prepara, compite y analiza — con tu iPhone o iPad en la misma red que tu consola o PC.",
+      phaseLabels: { before: "Antes", during: "Durante", after: "Después", setup: "Configuración" },
+      steps: [
         {
-          kicker: "Primeros pasos",
-          title: "Iniciar la App",
-          intro: "Instala Jax y abrela antes de salir a pista. La pantalla de inicio ofrece dos opciones: conectarte a una sesion en vivo o revisar tu historial de sesiones.",
-          steps: [
-            ["Instalar Jax", "Instala Jax Max Delta desde TestFlight o el App Store y abrela en tu iPhone o iPad antes de ir a pista."],
-            ["Entrar a sesion en vivo", "Toca Entrar a sesion en vivo para abrir la pantalla de conexion. Jax comenzara a escuchar la telemetria de tu juego de inmediato."],
-            ["Revisar sesiones pasadas", "Toca Historial de sesiones para explorar tus sesiones guardadas, setups, trazas de vuelta, condiciones y registros de eventos."]
-          ],
-          portrait: true,
-          screenshots: [["main_screen.png", "Pantalla de inicio — Entrar a sesion en vivo o Historial de sesiones"]]
+          phase: "setup",
+          title: "Instala y abre Jax Max Delta",
+          body: "Instala JMD en tu iPhone o iPad. Un breve recorrido inicial explica lo esencial — puedes volver a verlo desde Ajustes. No necesitas cuenta.",
+          shot: "home"
         },
         {
-          kicker: "Configuracion UDP",
-          title: "Configurar UDP y Jax",
-          intro: "Jax recibe la telemetria de tu juego a traves de tu red Wi-Fi local usando el protocolo UDP. Esta configuracion se hace una sola vez.",
-          steps: [
-            ["Misma red", "Conecta tu consola o PC y tu iPhone o iPad a la misma red Wi-Fi local o segmento de red."],
-            ["Encontrar la IP del dispositivo", "En iPhone o iPad: Ajustes → Wi-Fi → toca el nombre de tu red para ver tu IP local. La necesitaras en el juego."],
-            ["Activar UDP en el juego", "En tu juego EA SPORTS F1, ve a Ajustes → Configuracion de telemetria y activa la salida UDP."],
-            ["Establecer el destino", "Introduce la IP local de tu dispositivo como destino de telemetria. Establece el puerto UDP en 20777."],
-            ["Confirmar en Jax", "La pantalla Sesion en vivo muestra Escuchando en 0.0.0.0:20777. Cuando el juego envia datos, el tipo de sesion y el circuito se detectan automaticamente y el boton Abrir dashboard en vivo se activa."]
-          ],
-          portrait: true,
-          screenshots: [["waiting_for_live_session.png", "Pantalla Sesion en vivo — escuchando telemetria en el puerto 20777"]]
-        },
-        {
-          kicker: "Datos en vivo",
-          title: "Dashboard Principal",
-          intro: "El dashboard muestra datos de carrera en tiempo real en tres paneles. Mantén el dispositivo visible cerca del volante para leer sin apartar la vista de la pista.",
-          steps: [
-            ["Panel izquierdo — estado del coche", "Temperaturas y desgaste de neumaticos en las cuatro ruedas (FL/FR/RL/RR), balance de freno (BB), diferencial (DIFF), angulo de aleron (WING), danos (DMG), y temperatura de aire y pista."],
-            ["Panel central — bandera y vuelta", "Estado de la bandera (VERDE/AMARILLA/SC/VSC), tipo de vuelta (Outlap, Flying, Pit), numero de vuelta, velocidad en km/h y barra ERS o boost."],
-            ["Panel derecho — tiempos", "Vueltas de combustible restantes (positivo = sobrante), vuelta actual (NOW), ultima vuelta (LAST), mejor personal (BEST), mas rapida de la sesion (FASTEST) y parciales S1/S2/S3."],
-            ["Barra superior", "Posicion, contador de vueltas, desgaste por neumatico de un vistazo y delta respecto al lider o referencia."]
-          ],
-          legend: [
-            ["BB", "Balance de freno — reparto delantero/trasero (%)"],
-            ["DIFF", "Diferencial — en aceleracion/deceleracion (%)"],
-            ["FL/FR", "Temp + desgaste neumatico delantero izq/der"],
-            ["RL/RR", "Temp + desgaste neumatico trasero izq/der"],
-            ["WING", "Angulo del aleron delantero"],
-            ["DMG", "Danos en la carroceria (%)"],
-            ["AIR", "Temperatura del aire"],
-            ["TRK", "Temperatura de la pista"],
-            ["ERS", "Energia — nivel de carga / modo"],
-            ["DRS", "Sistema de reduccion de resistencia — activo / inactivo"],
-            ["FUEL", "Vueltas de combustible restantes (+ = sobrante)"],
-            ["PIT", "Ventana de parada / numero de parada"],
-            ["PEN", "Penalizacion en segundos"],
-            ["W%", "Intensidad de lluvia / clima"],
-            ["SC", "Safety Car en pista"],
-            ["VSC", "Virtual Safety Car activo"],
-            ["S1/S2/S3", "Tiempos de sector 1, 2, 3"]
-          ],
-          screenshots: [
-            ["main_dash_yellow.png", "Dashboard — bandera amarilla en Catalunya"],
-            ["main_dash_green.png", "Dashboard — vuelta lanzada con ERS boost activo"]
+          phase: "setup",
+          title: "Configura la telemetría UDP",
+          body: "JMD recibe la telemetría de tu juego por tu red local. Se configura una sola vez en el juego.",
+          list: [
+            "Conecta tu consola o PC y tu iPhone o iPad a la misma red local.",
+            "En JMD, abre Ajustes, pestaña AJUSTES, para ver la dirección IP de este dispositivo y el puerto UDP en el que escucha JMD (20777 por defecto).",
+            "En tu juego EA SPORTS F1, abre los ajustes de telemetría, activa la telemetría UDP e introduce esa dirección IP y ese puerto.",
+            "JMD detecta automáticamente el formato de telemetría del juego en cuanto llegan los paquetes."
           ]
         },
         {
-          kicker: "Muro de pits",
-          title: "Muro de Pits",
-          intro: "El Muro de Pits ofrece una vista completa de la carrera en seis pestanas. Accede desde el dashboard o desde la pantalla de inicio.",
-          tabs: ["TIMING", "MAP", "TRACE", "SETUP", "GAME", "COACH"],
-          steps: [
-            ["Timing", "Clasificacion completa: posicion, piloto, mejor vuelta, diferencia al lider, parciales, vuelta actual, compuesto y estado de stint para cada coche."],
-            ["Map", "Mapa del circuito en vivo con la posicion de cada coche actualizada en tiempo real."],
-            ["Trace", "Acelerador, freno y direccion graficados vuelta a vuelta. Selecciona cualquier vuelta para analizarla o compara dos vueltas para encontrar un delta."],
-            ["Setup", "Los valores de setup de tu coche para referencia durante la sesion. Un overlay VSC Delta aparece automaticamente durante periodos VSC para ayudarte a gestionar el delta."],
-            ["Game", "Telemetria y metadatos de sesion a nivel del juego."],
-            ["Coach", "Fichas de tecnica de conduccion: Entrada en curva, Salida de curva, Defensa, Conduccion en lluvia, ERS y DRS — recordatorios para cuando mas los necesitas."]
-          ],
-          screenshots: [
-            ["pit_wall_timing_1.png", "Timing — clasificacion con diferencias y compuestos"],
-            ["pit_wall_map_monaco.png", "Map — posiciones en vivo en Monaco"],
-            ["pit_wall_trace_1.png", "Trace — comparacion de vueltas con acelerador y freno"],
-            ["pit_wall_coach_1.png", "Coach — fichas de tecnica para curvas y ERS"]
-          ]
+          phase: "before",
+          title: "Prepara la sesión",
+          body: "Opcional, pero vale la pena. Abre Preparar sesión desde Inicio, elige circuito y coche, y repasa la pista — o cambia a la vista de sesión para planificar libres, clasificación o carrera.",
+          shot: "prepare"
         },
         {
-          kicker: "Historial",
-          title: "Sesiones Pasadas",
-          intro: "Cada sesion completada se guarda automaticamente. Abre el Historial de sesiones desde la pantalla de inicio para revisar cualquier carrera, qualy o practica pasada.",
-          tabs: ["OVERVIEW", "RESULT", "SETUP", "CONDITIONS", "HIGHLIGHTS"],
-          steps: [
-            ["Overview", "Nombre del circuito, tipo de sesion, formula, hora de inicio y fin, duracion, vueltas completadas y la liga o temporada a la que pertenece."],
-            ["Result", "Tu posicion final, vuelta rapida y resumen del resultado."],
-            ["Setup", "Setups con nombre usados durante la sesion, organizados por rango de vueltas — alerones, diferencial, balance de freno, altura al suelo y presiones de neumaticos."],
-            ["Conditions", "Reglas de sesion capturadas: dificultad IA, modo de danos, colisiones, safety car, parc ferme y la linea de tiempo del clima por rango de vueltas."],
-            ["Highlights", "Registro cronologico de eventos: nota de salida de Jax, vueltas rapidas (tuyas o del campo), paradas en boxes, cambios de setup, penalizaciones, danos y eventos de rivales."]
-          ],
-          screenshots: [
-            ["past_session_highlights.png", "Highlights — registro de eventos en Monza"],
-            ["past_session_setups.png", "Setup — setups con nombre por rango de vueltas"],
-            ["past_session_conditions.png", "Conditions — reglas de sesion y clima"],
-            ["Past_session_overview.png", "Overview — resumen completo de sesion"]
-          ]
+          phase: "during",
+          title: "Empieza la sesión y conéctate",
+          body: "Abre el Panel y sal a pista. JMD espera la telemetría y se conecta en cuanto tu juego empieza a enviarla."
         },
         {
-          kicker: "Configuracion",
-          title: "Ajustes",
-          intro: "Toca el icono de engranaje en la pantalla de inicio para acceder a los ajustes. Las areas clave son la guia de abreviaturas del dashboard, las alertas de voz Jax y la configuracion UDP.",
-          steps: [
-            ["Guia de abreviaturas", "La pestana Plus muestra el significado de cada abreviatura del dashboard — BB, DIFF, W, PEN, SC, VSC, ERS, DRS — para que nada en pantalla sea un misterio."],
-            ["Alertas de voz Jax", "En la pestana Jax, elige que categorias de alerta escuchar: neumaticos, combustible, delta, penalizaciones, banderas y eventos. Ajusta el volumen y umbrales por categoria."],
-            ["Puerto UDP", "El puerto por defecto es 20777. Si tu version del juego usa otro puerto, actualizalo aqui. La direccion de escucha actual se muestra en la pantalla Sesion en vivo."],
-            ["Problemas de audio", "Si las alertas de voz no suenan, verifica que el modo silencio este desactivado, el volumen de la app no este en cero y las categorias de alertas esten habilitadas en los ajustes de Jax."]
-          ],
-          portrait: true,
-          screenshots: [["IMG_8682.png", "Ajustes — guia del dashboard e informacion UDP"]]
+          phase: "during",
+          title: "Conduce con el panel",
+          body: "Coloca tu dispositivo donde puedas leerlo de un vistazo. La leyenda integrada explica cada abreviatura del panel.",
+          shot: "dashboard"
+        },
+        {
+          phase: "during",
+          title: "Deja que Jax te hable",
+          body: "Elige la voz de Jax y las categorías que quieres oír en Ajustes, pestaña JAX. Durante la sesión, el botón Jax del muro de boxes te permite ajustarlas sin salir del coche."
+        },
+        {
+          phase: "during",
+          title: "Abre el muro de boxes cuando necesites más",
+          body: "Toca la pestaña del muro de boxes en el panel para ver tiempos, el mapa en vivo, tu coche, trazas, reglajes y detalles de la sesión. Vuelve a tocar para regresar al panel.",
+          shot: "pitWallTiming"
+        },
+        {
+          phase: "after",
+          title: "Termina la sesión",
+          body: "Cuando una sesión termina, JMD lo reconoce y la guarda en el historial de sesiones. Después de una carrera te dice en qué posición terminaste y te permite corregir cómo terminó la carrera si hace falta. Si la telemetría se detiene antes de que la sesión haya terminado claramente, JMD te lo pregunta."
+        },
+        {
+          phase: "after",
+          title: "Analiza en el historial de sesiones",
+          body: "Abre el historial de sesiones desde Inicio para encontrar cualquier sesión guardada. Cada análisis se adapta al tipo de sesión: ritmo para libres y clasificación, la historia completa para las carreras.",
+          shot: "sessionHistory"
+        },
+        {
+          phase: "after",
+          title: "Repite tu carrera",
+          body: "En carreras y sprints, abre la sesión en el historial para ver Race Replay: la torre de tiempos, las diferencias, los neumáticos y los eventos de carrera, vuelta a vuelta.",
+          shot: "raceReplayLandscape"
+        },
+        {
+          phase: "setup",
+          title: "Gestiona ajustes, datos y copia de seguridad",
+          body: "La pestaña SOPORTE de Ajustes reúne las opciones de grabación y retención de datos, la copia de seguridad en iCloud (copiar ahora, restaurar) y las demos integradas. La pestaña LEGAL enlaza a los términos y a la política de privacidad."
         }
       ],
-      troubleTitle: "Problemas comunes",
+      troubleTitle: "Solución de problemas",
       trouble: [
-        ["Sin telemetria recibida", "Verifica que la telemetria UDP este activa en el juego, que la IP sea la del dispositivo, que ambos esten en la misma red y que el puerto sea 20777."],
-        ["Datos cortados en sesion", "Verifica que el dispositivo siguio en Wi-Fi, que el modo ahorro de energia no interrumpio la app y que la consola no cambio de red."],
-        ["IP del dispositivo incorrecta", "La IP del telefono o tablet puede cambiar entre sesiones. Revisa los ajustes Wi-Fi y actualiza el destino de telemetria en el juego si es necesario."],
-        ["Alertas de voz sin sonido", "Revisa volumen, modo silencio, ajustes de audio de la app y categorias de alertas activadas en los ajustes de Jax."]
+        ["No se recibe telemetría", "Comprueba que la telemetría UDP esté activada en el juego, que la IP coincida con la de la pestaña AJUSTES de JMD, que el puerto coincida y que ambos dispositivos estén en la misma red."],
+        ["Los datos se cortan a mitad de sesión", "Asegúrate de que el dispositivo siguió conectado al Wi-Fi, de que el modo de bajo consumo no interrumpió la app y de que la consola no cambió de red."],
+        ["La IP del dispositivo cambió", "Las IP locales pueden cambiar entre sesiones. Revisa la pestaña AJUSTES de JMD y actualiza los ajustes de telemetría del juego si es necesario."],
+        ["Jax no habla", "Revisa el volumen y el modo silencio del dispositivo, y asegúrate de que la voz de Jax y las categorías deseadas estén activadas en la pestaña JAX de Ajustes o con el botón Jax del muro de boxes."],
+        ["No hay Race Replay para una sesión", "Race Replay está disponible para carreras y sprints captados con suficiente detalle. Libres, clasificación y contrarreloj tienen su propio análisis centrado en el ritmo."],
+        ["Faltan algunos valores", "No todas las sesiones del juego envían todos los campos. JMD muestra como faltantes los datos que faltan en lugar de suponerlos."]
       ]
     },
     support: {
-      title: "Soporte de Jax Max Delta", intro: "Ayuda de configuracion, FAQ, problemas conocidos y feedback de testers.",
-      faqTitle: "FAQ", faq: [["Funciona en consola?", "Si. Jax esta pensado para consola. Necesitas un juego con telemetria compatible y el dispositivo en la misma red."], ["Jax esta afiliado oficialmente?", "No. Jax Max Delta es independiente y usa telemetria disponible en juegos compatibles."], ["Es solo un dashboard?", "No. Jax tambien es tu equipo virtual en el muro de pits, capa de alertas de voz, ingeniero de carrera personal y diario de carreras."], ["Donde estan mis datos?", "En tu dispositivo. El historial de sesiones, las trazas de vuelta y los setups viven en el almacenamiento privado de la app. Si iCloud esta disponible, la app tambien puede respaldar tu historial y tus ligas en tu propio contenedor privado de iCloud, que nosotros no podemos leer."], ["Como envio feedback?", "Envia dispositivo, juego, plataforma, tipo de sesion y que paso a support@jaxmaxdelta.com."]],
-      knownTitle: "Problemas conocidos", known: ["No se reciben datos UDP porque la telemetria esta desactivada en el juego.", "Telefono o tablet no esta en la misma red que la consola o PC.", "IP, puerto o formato UDP incorrecto en los ajustes del juego.", "Alertas de voz sin sonido por volumen, modo silencio o categorias de alertas."],
-      feedbackTitle: "Feedback de testers", feedbackBody: "Un buen reporte incluye juego, plataforma, dispositivo, version de app, ajustes de telemetria y resultado esperado."
+      title: "Soporte de Jax Max Delta",
+      intro: "Ayuda de configuración, respuestas a preguntas frecuentes y una forma directa de contactarnos.",
+      faqTitle: "Preguntas frecuentes",
+      faq: [
+        ["¿Jax Max Delta funciona en consola?", "Sí. JMD está pensado para pilotos de consola. Tu juego debe enviar telemetría UDP y tu iPhone o iPad debe estar en la misma red local que tu PlayStation, Xbox o PC."],
+        ["¿Qué juegos son compatibles?", "EA SPORTS F1 24, F1 25 y F1 26, mediante la salida de telemetría UDP del juego."],
+        ["¿Está disponible en Android?", "Todavía no. Jax Max Delta funciona actualmente en iPhone y iPad."],
+        ["¿Jax está afiliado oficialmente con EA, F1, Codemasters, Fanatec, PlayStation o Xbox?", "No. Jax Max Delta es independiente y usa datos de telemetría de juegos compatibles cuando están disponibles."],
+        ["¿Es solo un panel de telemetría?", "No. El panel en vivo es una parte. JMD también te ayuda a preparar la sesión, te da los mensajes de voz de Jax y un muro de boxes completo mientras conduces, y guarda tu historial, reglajes, trazas de vuelta y Race Replay después."],
+        ["¿Por qué algunas sesiones no tienen Race Replay?", "Race Replay es para carreras y sprints captados con suficiente detalle. Libres, clasificación y contrarreloj tienen su propio análisis centrado en el ritmo."],
+        ["¿Dónde se guardan mis datos?", "En tu dispositivo. El historial de sesiones, las trazas de vuelta y los reglajes viven en el almacenamiento privado de la app. Si iCloud está disponible, la app también puede respaldar tu historial y tus ligas en tu propio contenedor privado de iCloud, que nosotros no podemos leer. Consulta la política de privacidad para más detalles."],
+        ["¿Dónde puedo descargarlo?", "Jax Max Delta se prepara para su lanzamiento en el App Store. El enlace de descarga aparecerá en este sitio en cuanto esté disponible."],
+        ["¿Cómo envío comentarios como tester?", "Envía el modelo del dispositivo, el juego, la consola o PC, el tipo de sesión y lo que pasó a support@jaxmaxdelta.com."]
+      ],
+      knownTitle: "Problemas comunes",
+      known: [
+        "No se reciben datos UDP porque la telemetría está desactivada en el juego.",
+        "El teléfono o la tablet no está en la misma red que la consola o el PC.",
+        "IP, puerto o formato de telemetría UDP incorrectos en el juego.",
+        "Las alertas de voz no suenan por el volumen, el modo silencio o las categorías de alertas."
+      ],
+      feedbackTitle: "Contacto y comentarios",
+      feedbackBody: "Un buen reporte incluye tu juego, plataforma, dispositivo, versión de la app, ajustes de telemetría y una breve descripción de lo que esperabas frente a lo que pasó."
     },
-    privacy: null, terms: null, roadmap: null, blog: null
+    roadmap: {
+      title: "Hoja de ruta",
+      intro: "Lo que Jax Max Delta ofrece hoy y las direcciones que estamos explorando. Los elementos futuros no tienen fecha y pueden cambiar.",
+      groups: [
+        ["Disponible ahora · R1", [
+          "Preparar sesión: mapa del circuito, curvas, neumáticos, reglajes y contexto de sesión",
+          "Panel en vivo",
+          "Mensajes de voz y coaching contextual de Jax, ajustables en plena sesión",
+          "Muro de boxes: tiempos, mapa en vivo, estado del coche, trazas de vuelta, reglajes y detalles del juego y la sesión",
+          "Historial de sesiones adaptado al tipo de sesión",
+          "Race Replay para carreras y sprints",
+          "Trazas de vuelta y comparación de vueltas",
+          "Seguimiento de reglajes y biblioteca de reglajes por circuito",
+          "Contexto de neumáticos, combustible y carrera",
+          "Gestión de energía de F1 26",
+          "Gestión de DRS, Safety Car, VSC y bandera roja",
+          "Copia de seguridad privada en iCloud del historial de sesiones",
+          "Consejos de carrera y demos integradas",
+          "Inglés, francés y español"
+        ]],
+        ["Siguiente · Pulido", [
+          "Mejoras guiadas por los comentarios de los primeros usuarios",
+          "Más cobertura de preparación para más combinaciones de circuito y coche",
+          "Más formas de comparar sesiones por circuito, reglaje y condiciones"
+        ]],
+        ["En estudio · Futuro", [
+          "Una vista de fin de semana: libres, clasificación y carrera como una sola historia",
+          "Un análisis tipo repetición para libres y clasificación",
+          "Tendencias de progreso a lo largo de muchas sesiones",
+          "Guía de estrategia de neumáticos más completa, según el compuesto",
+          "Android",
+          "Otros juegos de carreras cuando la telemetría sea fiable"
+        ]]
+      ]
+    },
+    privacy: null, terms: null, blog: null
   }
 };
 
 copy.fr.privacy = cloneLocalizedLegal("fr", copy.en.privacy);
 copy.fr.terms = cloneLocalizedLegal("fr", copy.en.terms);
-copy.fr.roadmap = cloneLocalizedRoadmap("fr", copy.en.roadmap);
 copy.fr.blog = cloneLocalizedBlog("fr", copy.en.blog);
 copy.es.privacy = cloneLocalizedLegal("es", copy.en.privacy);
 copy.es.terms = cloneLocalizedLegal("es", copy.en.terms);
-copy.es.roadmap = cloneLocalizedRoadmap("es", copy.en.roadmap);
 copy.es.blog = cloneLocalizedBlog("es", copy.en.blog);
 
 function cloneLocalizedLegal(lang, source) {
@@ -1005,27 +1561,6 @@ function cloneLocalizedLegal(lang, source) {
     title: "Terminos de uso",
     intro: "Estos terminos basicos explican las reglas para usar Jax Max Delta.",
     sections: source.sections.map(([title, body]) => [translateTermsTitle(lang, title), translateTermsBody(lang, body)])
-  };
-}
-
-function cloneLocalizedRoadmap(lang, source) {
-  if (lang === "fr") return {
-    title: "Feuille de route",
-    intro: "Jax est construit par etapes. Cette page separe ce qui existe maintenant, ce qui arrive ensuite et ce qui reste futur.",
-    groups: [
-      ["R1 / Actuel", ["Tableau de bord second ecran en direct", "Coaching vocal et alertes de style ingenieur de course", "Historique des sessions", "Suivi des reglages", "Contexte pneus, essence, penalites, drapeaux, meteo et evenements de course", "Bases de memoire de piste et journal de course"]],
-      ["R2 / Prochain", ["Plus d'outils d'analyse apres session", "Meilleure comparaison des reglages par piste et conditions", "Flux de retour testeur plus complet", "Onboarding d'acces anticipe plus soigne", "Mises en page plus claires pour telephone et tablette"]],
-      ["Futur", ["Synchro nuage optionnelle", "Support de telemetrie pour plus de jeux", "Coaching plus approfondi une fois valide", "Outils de preparation de week-end de ligue", "Tendances de progression pilote a long terme"]]
-    ]
-  };
-  return {
-    title: "Roadmap",
-    intro: "Jax se construye por etapas. Esta pagina separa lo actual, lo siguiente y el trabajo futuro.",
-    groups: [
-      ["R1 / Actual", ["Dashboard de segunda pantalla en vivo", "Coaching de voz y alertas estilo ingeniero de carrera", "Historial de sesiones", "Seguimiento de setups", "Contexto de neumaticos, combustible, penalizaciones, banderas, clima y eventos", "Bases de memoria de pista y diario de carreras"]],
-      ["R2 / Siguiente", ["Mas herramientas de revision post-sesion", "Mejor comparacion de setups por pista y condiciones", "Flujo de feedback de testers mas completo", "Onboarding de acceso anticipado mas pulido", "Layouts mas claros para telefono y tablet"]],
-      ["Futuro", ["Cloud sync opcional", "Soporte de telemetria para mas juegos", "Coaching mas profundo cuando este validado", "Herramientas para preparar fines de semana de liga", "Tendencias de progreso del piloto a largo plazo"]]
-    ]
   };
 }
 
@@ -1189,79 +1724,71 @@ function translateTermsBody(lang, body) {
     .replace("Questions about these terms can be sent to support@jaxmaxdelta.com.", "Preguntas sobre estos terminos: support@jaxmaxdelta.com.");
 }
 
+/* ── Paths ─────────────────────────────────────────────────────────────── */
+
+function inBlogPost() {
+  return document.body.dataset.page === "post";
+}
+
 function route(lang, file = "index.html") {
-  const depth = window.location.pathname.includes("/blog/") ? "../" : "";
+  const depth = inBlogPost() ? "../" : "";
   return `${depth}${file}`;
 }
 
 function asset(path) {
-  return window.location.pathname.includes("/blog/") ? `../../assets/${path}` : `../assets/${path}`;
+  return inBlogPost() ? `../../assets/${path}` : `../assets/${path}`;
 }
+
+function langSwitchHref(lang, file) {
+  const depth = inBlogPost() ? "../../" : "../";
+  return `${depth}${lang}/${file}`;
+}
+
+/* ── Boot ──────────────────────────────────────────────────────────────── */
 
 function boot() {
   const root = document.getElementById("app");
-  const lang = document.documentElement.lang || "en";
+  const lang = SITE.langs.includes(document.documentElement.lang) ? document.documentElement.lang : "en";
   const page = document.body.dataset.page || "home";
   const slug = document.body.dataset.slug || "";
   const t = copy[lang];
-  document.title = pageTitle(t, page, slug);
-  setMeta("description", pageDescription(t, page, slug));
-  setOg(t, page, slug);
-  root.innerHTML = `${header(t, lang, page)}<main>${renderPage(t, lang, page, slug)}</main>${footer(t, lang)}`;
+  root.innerHTML = `${header(t, lang, page)}<main id="main" tabindex="-1">${renderPage(t, lang, page, slug)}</main>${footer(t, lang)}`;
   setupMobileNav();
 }
 
-function pageTitle(t, page, slug) {
-  if (page === "post") return `${t.blog.posts[slug].title} - Jax Max Delta`;
-  const titles = { home: t.meta.title, features: t.features.title, how: t.how.title, support: t.support.title, blog: t.blog.title, privacy: t.privacy.title, terms: t.terms.title, roadmap: t.roadmap.title };
-  return page === "home" ? t.meta.title : `${titles[page]} - Jax Max Delta`;
+function renderPage(t, lang, page, slug) {
+  const renderers = { home, features, how, support, blog, privacy, terms, roadmap, post };
+  return (renderers[page] || home)(t, lang, slug);
 }
 
-function pageDescription(t, page, slug) {
-  if (page === "post") return t.blog.posts[slug].summary;
-  const descriptions = { home: t.meta.description, features: t.features.intro, how: t.how.intro, support: t.support.intro, blog: t.blog.intro, privacy: t.privacy.intro, terms: t.terms.intro, roadmap: t.roadmap.intro };
-  return descriptions[page] || t.meta.description;
-}
+/* ── Chrome ────────────────────────────────────────────────────────────── */
 
-function setMeta(name, value) {
-  const node = document.querySelector(`meta[name="${name}"]`);
-  if (node) node.setAttribute("content", value);
-}
-
-function setOg(t, page, slug) {
-  const values = {
-    "og:title": pageTitle(t, page, slug),
-    "og:description": pageDescription(t, page, slug),
-    "twitter:title": pageTitle(t, page, slug),
-    "twitter:description": pageDescription(t, page, slug)
-  };
-  Object.entries(values).forEach(([property, value]) => {
-    const selector = property.startsWith("twitter") ? `meta[name="${property}"]` : `meta[property="${property}"]`;
-    const node = document.querySelector(selector);
-    if (node) node.setAttribute("content", value);
-  });
+function currentFile(page) {
+  if (page === "post") return `blog/${document.body.dataset.slug}.html`;
+  if (page === "home") return "index.html";
+  if (page === "how") return "how-to.html";
+  return `${page}.html`;
 }
 
 function header(t, lang, page) {
-  const links = [["home", "index.html"], ["features", "features.html"], ["how", "how-to.html"], ["support", "support.html"], ["blog", "blog.html"], ["roadmap", "roadmap.html"]];
-  const blogSlug = document.body.dataset.slug ? `${document.body.dataset.slug}.html` : "blog.html";
-  const file = page === "post" ? `blog/${blogSlug}` : (page === "how" ? "how-to.html" : `${page}.html`).replace("home.html", "index.html");
+  const links = [["features", "features.html"], ["how", "how-to.html"], ["support", "support.html"]];
+  const file = currentFile(page);
   return `
+    <a class="skip-link" href="#main">${t.common.skip}</a>
     <header class="site-header">
       <div class="wrap nav">
-        <a class="brand" href="${route(lang)}" aria-label="Jax Max Delta">
-          <img class="brand-mark" src="${asset("jax_helmet.png")}" alt="">
-          <span class="brand-parent">${t.common.parent}</span>
+        <a class="brand" href="${route(lang)}" aria-label="Jax Max Delta - ${t.nav.home}">
+          <img class="brand-mark" src="${asset("brand/jmd-helmet-96.png")}" width="34" height="34" alt="">
           <span class="brand-name">JAX MA<span class="brand-x">X</span> DELTA</span>
         </a>
-        <button class="mobile-nav-toggle" type="button" aria-label="Menu" aria-expanded="false"><span></span></button>
-        <div class="nav-right">
-          <nav class="nav-links" aria-label="Main navigation">
-            ${links.map(([key, href]) => `<a href="${route(lang, href)}" ${page === key || (page === "post" && key === "blog") ? 'aria-current="page"' : ""}>${t.nav[key]}</a>`).join("")}
+        <button class="mobile-nav-toggle" type="button" aria-controls="site-menu" aria-expanded="false"><span class="sr-only">${t.common.menu}</span><span aria-hidden="true"></span></button>
+        <div class="nav-right" id="site-menu">
+          <nav class="nav-links" aria-label="${t.common.menu}">
+            ${links.map(([key, href]) => `<a href="${route(lang, href)}"${page === key ? ' aria-current="page"' : ""}>${t.nav[key]}</a>`).join("")}
           </nav>
-          <div class="lang-switcher" aria-label="Language">
-            ${SITE.langs.map((code) => `<a class="${code === lang ? "active" : ""}" href="${langSwitchHref(code, file)}">${code.toUpperCase()}</a>`).join("")}
-          </div>
+          <nav class="lang-switcher" aria-label="${t.common.language}">
+            ${SITE.langs.map((code) => `<a href="${langSwitchHref(code, file)}" hreflang="${code}" lang="${code}"${code === lang ? ' aria-current="true" class="active"' : ""}>${code.toUpperCase()}</a>`).join("")}
+          </nav>
         </div>
       </div>
     </header>`;
@@ -1271,195 +1798,384 @@ function setupMobileNav() {
   const headerNode = document.querySelector(".site-header");
   const toggle = document.querySelector(".mobile-nav-toggle");
   if (!headerNode || !toggle) return;
-  toggle.addEventListener("click", () => {
-    const isOpen = headerNode.classList.toggle("nav-open");
-    toggle.setAttribute("aria-expanded", String(isOpen));
-    document.body.classList.toggle("nav-locked", isOpen);
+  const setOpen = (open) => {
+    headerNode.classList.toggle("nav-open", open);
+    toggle.setAttribute("aria-expanded", String(open));
+  };
+  toggle.addEventListener("click", () => setOpen(!headerNode.classList.contains("nav-open")));
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && headerNode.classList.contains("nav-open")) {
+      setOpen(false);
+      toggle.focus();
+    }
   });
-  document.querySelectorAll(".nav-links a, .lang-switcher a").forEach((link) => {
-    link.addEventListener("click", () => {
-      headerNode.classList.remove("nav-open");
-      toggle.setAttribute("aria-expanded", "false");
-      document.body.classList.remove("nav-locked");
-    });
-  });
-}
-
-function langSwitchHref(lang, file) {
-  const depth = window.location.pathname.includes("/blog/") ? "../../" : "../";
-  return `${depth}${lang}/${file}`;
+  headerNode.querySelectorAll(".nav-right a").forEach((link) => link.addEventListener("click", () => setOpen(false)));
 }
 
 function footer(t, lang) {
+  const col = (title, items) => `<nav class="footer-col" aria-label="${title}"><h2>${title}</h2>${items.map(([key, href]) => `<a href="${route(lang, href)}">${t.nav[key]}</a>`).join("")}</nav>`;
   return `
     <footer class="footer">
       <div class="wrap footer-inner">
-        <div>
-          <strong>${t.common.app}</strong>
+        <div class="footer-brand">
+          <a class="brand" href="${route(lang)}"><img class="brand-mark" src="${asset("brand/jmd-helmet-96.png")}" width="30" height="30" alt=""><span class="brand-name">JAX MA<span class="brand-x">X</span> DELTA</span></a>
           <p>${t.common.footerLead}</p>
+          <p class="footer-parent">${t.common.parent}</p>
         </div>
-        <nav class="footer-links" aria-label="Footer navigation">
-          <a href="${route(lang, "features.html")}">${t.nav.features}</a>
-          <a href="${route(lang, "how-to.html")}">${t.nav.how}</a>
-          <a href="${route(lang, "support.html")}">${t.nav.support}</a>
-          <a href="${route(lang, "privacy.html")}">${t.nav.privacy}</a>
-          <a href="${route(lang, "terms.html")}">${t.nav.terms}</a>
-        </nav>
+        ${col(t.common.footerProduct, [["features", "features.html"], ["how", "how-to.html"], ["roadmap", "roadmap.html"], ["blog", "blog.html"]])}
+        ${col(t.common.footerHelp, [["support", "support.html"], ["privacy", "privacy.html"], ["terms", "terms.html"]])}
         <p class="footer-disclaimer">${t.common.disclaimer}</p>
       </div>
     </footer>`;
 }
 
-function renderPage(t, lang, page, slug) {
-  const renderers = { home, features, how, support, blog, privacy, terms, roadmap, post };
-  return renderers[page](t, lang, slug);
+/* ── Shared pieces ─────────────────────────────────────────────────────── */
+
+function storeCta(t) {
+  if (SITE.store.appStoreUrl) return `<a class="btn btn-primary" href="${SITE.store.appStoreUrl}">${t.common.storeCta}</a>`;
+  if (SITE.store.testFlightUrl) return `<a class="btn btn-primary" href="${SITE.store.testFlightUrl}">${t.common.testflightCta}</a>`;
+  return `<span class="btn btn-status"><span class="status-dot" aria-hidden="true"></span>${t.common.storeSoon}</span>`;
 }
 
+function shotFile(slot, lang) {
+  const file = slot.file;
+  if (!file) return "";
+  return typeof file === "string" ? file : (file[lang] || file.en || "");
+}
+
+// A framed app screenshot, or a styled placeholder until the current capture exists.
+function shot(key, t, lang, { caption = true, eager = false } = {}) {
+  const slot = SHOTS[key];
+  const label = t.shots[key];
+  const orientation = slot.orientation;
+  const file = shotFile(slot, lang);
+  const w = slot.w || (orientation === "landscape" ? 2868 : 1320);
+  const h = slot.h || (orientation === "landscape" ? 1320 : 2868);
+  const body = file
+    ? `<img src="${asset(`screenshots/current/${file}`)}" width="${w}" height="${h}" alt="${label}" ${eager ? "" : 'loading="lazy" '}decoding="async">`
+    : `<div class="shot-empty" role="img" aria-label="${label} - ${t.common.shotSoon}"><span class="shot-empty-title">${label}</span><span class="shot-empty-note">${t.common.shotSoon}</span></div>`;
+  return `<figure class="shot shot--${orientation}${file ? "" : " is-empty"}"><div class="shot-frame">${body}</div>${caption ? `<figcaption>${label}</figcaption>` : ""}</figure>`;
+}
+
+function list(items, cls = "tick-list") {
+  return `<ul class="${cls}">${items.map((x) => `<li>${x}</li>`).join("")}</ul>`;
+}
+
+function kicker(text) {
+  return `<p class="section-kicker">${text}</p>`;
+}
+
+function pageHero(eyebrow, title, intro) {
+  return `<section class="page-hero"><div class="wrap"><p class="eyebrow">${eyebrow}</p><h1>${title}</h1>${intro ? `<p class="page-intro">${intro}</p>` : ""}</div></section>`;
+}
+
+function sectionHead(k, title, intro) {
+  return `<div class="section-heading"><div>${kicker(k)}<h2>${title}</h2></div>${intro ? `<p>${intro}</p>` : ""}</div>`;
+}
+
+function heroTrace(label) {
+  return `
+    <svg class="hero-trace" viewBox="0 0 600 360" role="img" aria-label="${label}">
+      <g class="trace-grid">
+        ${[60, 120, 180, 240].map((y) => `<line x1="0" x2="600" y1="${y}" y2="${y}"/>`).join("")}
+        ${[200, 400].map((x) => `<line class="sector" x1="${x}" x2="${x}" y1="20" y2="340"/>`).join("")}
+      </g>
+      <g class="trace-labels"><text x="12" y="36">S1</text><text x="212" y="36">S2</text><text x="412" y="36">S3</text></g>
+      <path class="trace-ref" d="M0,74 L58,64 L92,68 L112,196 L132,204 L154,158 L204,92 L232,84 L252,168 L268,182 L288,128 L334,72 L382,60 L402,214 L422,226 L446,176 L482,118 L520,84 L546,148 L562,156 L586,108 L600,92"/>
+      <path class="trace-speed" d="M0,70 L60,58 L90,62 L110,190 L130,200 L150,150 L200,84 L230,76 L250,162 L265,176 L285,120 L330,64 L380,52 L400,210 L420,222 L445,168 L480,110 L520,76 L545,142 L560,150 L585,100 L600,84"/>
+      <g class="trace-brake">
+        <rect x="90" y="300" width="22" height="18"/><rect x="230" y="300" width="20" height="18"/>
+        <rect x="380" y="300" width="22" height="18"/><rect x="520" y="300" width="25" height="18"/>
+      </g>
+      <path class="trace-throttle" d="M0,280 L90,280 L90,296 L130,296 L130,280 L230,280 L230,296 L268,296 L268,280 L380,280 L380,296 L424,296 L424,280 L520,280 L520,296 L560,296 L560,280 L600,280"/>
+    </svg>`;
+}
+
+/* ── Home ──────────────────────────────────────────────────────────────── */
+
 function home(t, lang) {
+  const h = t.home;
+  const featuresHref = route(lang, "features.html");
   return `
     <section class="hero">
       <div class="wrap hero-grid">
-        <div>
-          <div class="eyebrow">${t.home.kicker}</div>
-          <h1>${t.home.title}</h1>
-          <p class="hero-position">${t.home.position}</p>
-          <p class="hero-subtitle">${t.home.intro}</p>
+        <div class="hero-copy">
+          <p class="eyebrow">${t.common.eyebrow}</p>
+          <h1>${h.titleLines.map((line) => `<span>${line}</span>`).join("")}</h1>
+          <p class="hero-lead">${h.lead}</p>
           <div class="cta-row">
-            <a class="btn btn-primary" href="#early">${t.common.ctaJoin}</a>
-            <a class="btn btn-secondary" href="${route(lang, "features.html")}">${t.common.ctaFeatures}</a>
+            ${storeCta(t)}
+            <a class="btn btn-secondary" href="${featuresHref}">${t.common.ctaFeatures}</a>
+          </div>
+        </div>
+        <div class="hero-visual">
+          ${heroTrace(h.visualLabel)}
+          <ol class="phase-rail" aria-hidden="true">${h.phases.map(([tag]) => `<li>${tag}</li>`).join("")}</ol>
+        </div>
+      </div>
+      <div class="wrap"><ul class="proof-strip">${h.proof.map((p) => `<li>${p}</li>`).join("")}</ul></div>
+    </section>
+
+    <section class="section" id="phases">
+      <div class="wrap">
+        ${sectionHead(h.phasesKicker, h.phasesTitle, h.phasesIntro)}
+        <ol class="phase-grid">
+          ${h.phases.map(([tag, title, body, href], i) => `
+            <li class="phase-card">
+              <span class="phase-num">0${i + 1}</span>
+              <p class="phase-tag">${tag}</p>
+              <h3><a href="${href}">${title}</a></h3>
+              <p>${body}</p>
+            </li>`).join("")}
+        </ol>
+      </div>
+    </section>
+
+    <section class="section band" id="prepare">
+      <div class="wrap split split--portrait">
+        <div>
+          ${kicker(h.prepare.kicker)}
+          <h2>${h.prepare.title}</h2>
+          <p class="lead">${h.prepare.body}</p>
+          ${list(h.prepare.items)}
+          <p class="fine-note">${h.prepare.note}</p>
+        </div>
+        ${shot("prepare", t, lang)}
+      </div>
+    </section>
+
+    <section class="section" id="race">
+      <div class="wrap">
+        <div class="split split--wide">
+          <div>
+            ${kicker(h.race.kicker)}
+            <h2>${h.race.title}</h2>
+            <p class="lead">${h.race.body}</p>
+            ${list(h.race.items)}
+          </div>
+          ${shot("dashboard", t, lang)}
+        </div>
+        <div class="jax-panel">
+          <div>
+            ${kicker(h.race.jaxKicker)}
+            <h3>${h.race.jaxTitle}</h3>
+            <p>${h.race.jaxBody}</p>
+          </div>
+          <div>
+            <ul class="chip-list">${h.race.jaxItems.map((x) => `<li>${x}</li>`).join("")}</ul>
+            <p class="fine-note">${h.race.jaxNote}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section band" id="pit-wall">
+      <div class="wrap">
+        <div class="split">
+          <div>
+            ${kicker(h.pitWall.kicker)}
+            <h2>${h.pitWall.title}</h2>
+            <p class="lead">${h.pitWall.body}</p>
+          </div>
+          ${list(h.pitWall.items)}
+        </div>
+        <div class="shot-row shot-row--3">
+          ${shot("pitWallTiming", t, lang)}${shot("pitWallMap", t, lang)}${shot("pitWallGame", t, lang)}
+        </div>
+      </div>
+    </section>
+
+    <section class="section replay" id="review">
+      <div class="wrap">
+        <div class="replay-head">
+          ${kicker(h.replay.kicker)}
+          <h2>${h.replay.title}</h2>
+          <p class="lead">${h.replay.body}</p>
+          <p class="badge">${h.replay.badge}</p>
+        </div>
+        <div class="replay-stage">
+          ${shot("raceReplayLandscape", t, lang)}
+          ${shot("raceReplayPortrait", t, lang)}
+        </div>
+        <div class="replay-detail">
+          ${list(h.replay.items, "tick-list tick-list--2col")}
+          <div>
+            <p class="notice">${h.replay.note}</p>
+            <a class="text-link" href="${featuresHref}#race-replay">${t.common.ctaReplay} →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="history">
+      <div class="wrap split split--portrait">
+        <div>
+          ${kicker(h.history.kicker)}
+          <h2>${h.history.title}</h2>
+          <p class="lead">${h.history.body}</p>
+          ${list(h.history.items)}
+          <p class="fine-note">${h.history.note}</p>
+        </div>
+        <div class="shot-pair">${shot("sessionHistory", t, lang)}${shot("raceResults", t, lang)}</div>
+      </div>
+    </section>
+
+    <section class="section band" id="privacy">
+      <div class="wrap">
+        ${sectionHead(h.privacy.kicker, h.privacy.title, h.privacy.body)}
+        <div class="grid-4">
+          ${h.privacy.points.map(([title, body]) => `<article class="card"><h3>${title}</h3><p>${body}</p></article>`).join("")}
+        </div>
+        <p class="section-link"><a class="text-link" href="${route(lang, "privacy.html")}">${t.common.ctaPrivacy} →</a></p>
+      </div>
+    </section>
+
+    <section class="section" id="platforms">
+      <div class="wrap split">
+        <div>
+          ${kicker(h.platforms.kicker)}
+          <h2>${h.platforms.title}</h2>
+          <p class="lead">${h.platforms.body}</p>
+        </div>
+        <div class="platform-groups">
+          ${h.platforms.groups.map(([label, items]) => `<div class="platform-group"><h3>${label}</h3><ul class="chip-list">${items.map((x) => `<li>${x}</li>`).join("")}</ul></div>`).join("")}
+          <p class="fine-note">${h.platforms.note}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="availability">
+      <div class="wrap">
+        <div class="cta-panel">
+          ${kicker(h.availability.kicker)}
+          <h2>${SITE.store.appStoreUrl ? h.availability.liveTitle : h.availability.soonTitle}</h2>
+          <p class="lead">${h.availability.body}</p>
+          <div class="cta-row">
+            ${SITE.store.appStoreUrl || SITE.store.testFlightUrl ? storeCta(t) : ""}
             <a class="btn btn-secondary" href="${route(lang, "how-to.html")}">${t.common.ctaHow}</a>
+            <a class="btn btn-secondary" href="mailto:${SITE.contact}">${t.common.ctaSupport}</a>
           </div>
-        </div>
-        <div class="hero-visual" aria-label="Jax Max Delta app visuals">
-          <div class="device-stage">
-            <div class="phone phone-main"><img src="${asset(lang === "fr" ? "jax_fr_splashscreen.png" : lang === "es" ? "jax_es_splashscreen.png" : "jax_en_splashscreen.png")}" alt="Jax Max Delta app screen"></div>
-            <div class="phone phone-side"><img src="${asset("jax_en_splashscreen.png")}" alt="Jax Max Delta dashboard preview"></div>
-            <div class="helmet-float"><img src="${asset("jax_helmet.png")}" alt="Jax Max Delta helmet"></div>
-            <div class="telemetry-card">${t.home.telemetry.map(([k, v]) => `<div class="telemetry-row"><span>${k}</span><strong>${v}</strong></div>`).join("")}</div>
-          </div>
-        </div>
-      </div>
-    </section>
-    ${section(t.home.whoTitle, t.home.whoIntro, cards(t.home.who))}
-    ${splitSection(t.home.benefitsTitle, t.home.benefitsIntro, t.home.benefits, "jax.png", "Jax Max Delta visual")}
-    ${section(t.home.featuresTitle, t.home.featuresIntro, featureCards(t.home.pillars))}
-    <section class="section" id="platforms"><div class="wrap split"><div><div class="section-kicker">${t.home.supportedTitle}</div><h2>${t.home.supportedTitle}</h2><p class="lead">${t.home.supportedBody}</p><div class="logo-strip"><span class="pill">iPhone</span><span class="pill">iPad</span><span class="pill">Xbox</span><span class="pill">PlayStation</span><span class="pill">PC</span><span class="pill">UDP telemetry</span><span class="pill">Supported racing games</span></div></div><div class="media-panel"><img src="${asset("jax_baseball_cap _and_more.png")}" alt="Jax Max Delta brand merchandise"></div></div></section>
-    <section class="section" id="early"><div class="wrap"><div class="panel"><div class="section-kicker">${t.home.earlyTitle}</div><h2>${t.home.earlyTitle}</h2><p class="lead">${t.home.earlyBody}</p><div class="cta-row"><a class="btn btn-primary" href="https://testflight.apple.com/join/placeholder">${t.common.ctaJoin}</a><a class="btn btn-secondary" href="https://apps.apple.com/app/id-placeholder">${t.common.ctaTry}</a><a class="btn btn-secondary" href="${route(lang, "support.html")}">${t.common.ctaSupport}</a></div><p class="notice">${t.common.placeholder}</p></div></div></section>
-    ${section(t.home.quickLinksTitle, "", cards(t.home.quickLinks.map(([a,b,c]) => [a,b,route(lang,c)]), true))}
-  `;
-}
-
-function features(t) {
-  return `
-    ${pageHero(t.common.eyebrow, t.features.title, t.features.intro)}
-    <section class="section">
-      <div class="wrap">
-        <div class="section-heading">
-          <div><div class="section-kicker">Jax Max Delta</div><h2>${t.features.current}</h2></div>
-          <span></span>
-        </div>
-      </div>
-      ${t.features.groups.map((g, i) => featureGroup(g, i % 2 === 1)).join("")}
-    </section>
-    ${section(t.features.future, "", cards(t.features.roadmap))}
-  `;
-}
-
-function featureGroup(g, flip) {
-  const shots = g.screenshots || [];
-  const mediaHtml = shots.length ? `
-    <div class="how-media">
-      ${shots.length === 1
-        ? howShot(shots[0][0], shots[0][1])
-        : `<div class="how-shots-grid">${shots.map(([f, c]) => howShot(f, c)).join("")}</div>`
-      }
-    </div>` : "";
-
-  const itemsHtml = g.items ? `<ul class="feat-list">${g.items.map(x => `<li>${x}</li>`).join("")}</ul>` : "";
-
-  const contentHtml = `
-    <div class="feat-content">
-      <div class="card-accent"></div>
-      <h3>${g.title}</h3>
-      <p>${g.body}</p>
-      ${itemsHtml}
-    </div>`;
-
-  return `
-    <div class="feat-group">
-      <div class="wrap how-split${flip ? " feat-flip" : ""}">
-        ${flip ? `${mediaHtml}${contentHtml}` : `${contentHtml}${mediaHtml}`}
-      </div>
-    </div>`;
-}
-
-function how(t) {
-  return `
-    ${pageHero(t.common.eyebrow, t.how.title, t.how.intro)}
-    ${t.how.sections.map(sec => howSection(sec)).join("")}
-    ${section(t.how.troubleTitle, "", cards(t.how.trouble))}
-  `;
-}
-
-function howSection(sec) {
-  const stepsHtml = (sec.steps || []).map(([a, b], i) =>
-    `<article class="step-item"><span class="step-num">${i + 1}</span><h3>${a}</h3><p>${b}</p></article>`
-  ).join("");
-
-  const legendHtml = sec.legend ? `
-    <div class="dash-legend">
-      ${sec.legend.map(([k, v]) => `<div class="legend-item"><span class="legend-key">${k}</span><span class="legend-val">${v}</span></div>`).join("")}
-    </div>` : "";
-
-  const tabsHtml = sec.tabs ? `
-    <div class="tab-pills">
-      ${sec.tabs.map(t => `<span class="tab-pill">${t}</span>`).join("")}
-    </div>` : "";
-
-  const contentHtml = `<div class="how-content">${tabsHtml}<div class="step-list">${stepsHtml}</div>${legendHtml}</div>`;
-
-  const shots = sec.screenshots || [];
-  const screenshotsHtml = shots.length ? `
-    <div class="how-media">
-      ${shots.length === 1
-        ? howShot(shots[0][0], shots[0][1])
-        : `<div class="how-shots-grid">${shots.map(([f, c]) => howShot(f, c)).join("")}</div>`
-      }
-    </div>` : "";
-
-  const splitClass = `how-split${sec.portrait ? " how-split--portrait" : ""}`;
-
-  return `
-    <section class="how-section">
-      <div class="wrap">
-        <div class="how-section-header">
-          <span class="section-kicker">${sec.kicker}</span>
-          <h2>${sec.title}</h2>
-          <p class="lead">${sec.intro}</p>
-        </div>
-        <div class="${splitClass}">
-          ${contentHtml}
-          ${screenshotsHtml}
         </div>
       </div>
     </section>`;
 }
 
-function howShot(file, caption) {
-  return `<figure class="how-shot"><img src="${asset("screenshots/" + file)}" alt="${caption}" loading="lazy"><figcaption>${caption}</figcaption></figure>`;
+/* ── Features ──────────────────────────────────────────────────────────── */
+
+function features(t, lang) {
+  const f = t.features;
+  return `
+    ${pageHero(t.common.eyebrow, f.title, f.intro)}
+    <nav class="wrap jump-nav" aria-label="${f.title}">
+      ${f.groups.map((g) => `<a href="#${g.id}">${g.title}</a>`).join("")}
+    </nav>
+    ${f.groups.map((g, i) => featureGroup(g, t, lang, i)).join("")}
+    <section class="section band">
+      <div class="wrap">
+        ${sectionHead(t.common.available, f.alsoTitle, "")}
+        <div class="grid-4">${f.also.map(([title, body]) => `<article class="card"><h3>${title}</h3><p>${body}</p></article>`).join("")}</div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="wrap">
+        ${sectionHead(f.futureKicker, f.futureTitle, f.futureIntro)}
+        <div class="grid-4">${f.future.map(([title, body]) => `<article class="card card--future"><h3>${title}</h3><p>${body}</p></article>`).join("")}</div>
+        <p class="section-link"><a class="text-link" href="${route(lang, "roadmap.html")}">${t.nav.roadmap} →</a></p>
+      </div>
+    </section>`;
 }
 
+function featureGroup(g, t, lang, index) {
+  const shots = g.shots || [];
+  const media = shots.length
+    ? `<div class="feat-media feat-media--${shots.length}">${shots.map((key) => shot(key, t, lang)).join("")}</div>`
+    : "";
+  const wide = shots.length > 1 || (shots.length === 1 && SHOTS[shots[0]].orientation === "landscape");
+  return `
+    <section class="feat-group${index % 2 ? " band" : ""}" id="${g.id}">
+      <div class="wrap${media ? ` feat-split${wide ? " feat-split--stack" : ""}` : " feat-solo"}">
+        <div class="feat-content">
+          <p class="feat-meta"><span class="phase-tag">${g.phase}</span><span class="shipped">${t.common.available}</span></p>
+          <h2>${g.title}</h2>
+          <p class="lead">${g.body}</p>
+          ${list(g.items, `tick-list${media && !wide ? "" : " tick-list--2col"}`)}
+          ${g.note ? `<p class="fine-note">${g.note}</p>` : ""}
+          ${g.link ? `<p><a class="text-link" href="${route(lang, g.link[0])}">${g.link[1]} →</a></p>` : ""}
+        </div>
+        ${media}
+      </div>
+    </section>`;
+}
+
+/* ── How it works ──────────────────────────────────────────────────────── */
+
+function how(t, lang) {
+  const h = t.how;
+  return `
+    ${pageHero(t.common.eyebrow, h.title, h.intro)}
+    <section class="section section--tight">
+      <div class="wrap">
+        <ol class="how-steps">
+          ${h.steps.map((step, i) => `
+            <li class="how-step${step.shot ? " has-shot" : ""}">
+              <div class="how-step-text">
+                <p class="feat-meta"><span class="step-num">${String(i + 1).padStart(2, "0")}</span><span class="phase-tag">${h.phaseLabels[step.phase]}</span></p>
+                <h2>${step.title}</h2>
+                <p>${step.body}</p>
+                ${step.list ? `<ol class="sub-steps">${step.list.map((x) => `<li>${x}</li>`).join("")}</ol>` : ""}
+                ${i === 0 ? `<div class="cta-row cta-row--tight">${storeCta(t)}</div>` : ""}
+              </div>
+              ${step.shot ? shot(step.shot, t, lang) : ""}
+            </li>`).join("")}
+        </ol>
+      </div>
+    </section>
+    <section class="section band">
+      <div class="wrap">
+        ${sectionHead(t.nav.support, h.troubleTitle, "")}
+        <div class="grid-3">${h.trouble.map(([title, body]) => `<article class="card"><h3>${title}</h3><p>${body}</p></article>`).join("")}</div>
+        <p class="section-link"><a class="text-link" href="${route(lang, "support.html")}">${t.nav.support} →</a></p>
+      </div>
+    </section>`;
+}
+
+/* ── Other pages ───────────────────────────────────────────────────────── */
+
 function support(t, lang) {
-  return `${pageHero(t.common.eyebrow, t.support.title, t.support.intro)}<section class="section"><div class="wrap page-grid"><div><h2>${t.support.faqTitle}</h2><div class="faq-list">${t.support.faq.map(([q,a]) => `<details class="faq-item"><summary><strong>${q}</strong></summary><p>${a}</p></details>`).join("")}</div></div><aside class="panel"><h2>${t.support.feedbackTitle}</h2><p>${t.support.feedbackBody}</p><p><a href="mailto:${SITE.contact}">${SITE.contact}</a></p><a class="btn btn-primary" href="mailto:${SITE.contact}">${t.common.ctaSupport}</a><h2>${t.support.knownTitle}</h2><ul>${t.support.known.map((x) => `<li>${x}</li>`).join("")}</ul><a href="${route(lang, "how-to.html")}">${t.nav.how}</a> · <a href="${route(lang, "privacy.html")}">${t.nav.privacy}</a></aside></div></section>`;
+  const s = t.support;
+  return `
+    ${pageHero(t.common.eyebrow, s.title, s.intro)}
+    <section class="section section--tight">
+      <div class="wrap page-grid">
+        <div>
+          <h2 class="block-title">${s.faqTitle}</h2>
+          <div class="faq-list">${s.faq.map(([q, a]) => `<details class="faq-item"><summary>${q}</summary><p>${a}</p></details>`).join("")}</div>
+        </div>
+        <aside class="panel">
+          <h2>${s.feedbackTitle}</h2>
+          <p>${s.feedbackBody}</p>
+          <p><a class="text-link" href="mailto:${SITE.contact}">${SITE.contact}</a></p>
+          <a class="btn btn-primary" href="mailto:${SITE.contact}">${t.common.ctaSupport}</a>
+          <h2>${s.knownTitle}</h2>
+          ${list(s.known)}
+          <p><a class="text-link" href="${route(lang, "how-to.html")}">${t.nav.how}</a> · <a class="text-link" href="${route(lang, "privacy.html")}">${t.nav.privacy}</a></p>
+        </aside>
+      </div>
+    </section>`;
 }
 
 function blog(t, lang) {
-  return `${pageHero(t.common.eyebrow, t.blog.title, t.blog.intro)}<section class="section"><div class="wrap grid-2">${SITE.posts.map((slug) => postCard(t, lang, slug)).join("")}</div></section>`;
+  return `${pageHero(t.common.eyebrow, t.blog.title, t.blog.intro)}<section class="section section--tight"><div class="wrap grid-2">${SITE.posts.map((slug) => postCard(t, lang, slug)).join("")}</div></section>`;
+}
+
+function postCard(t, lang, slug) {
+  const p = t.blog.posts[slug];
+  return `<article class="post-card"><p class="post-meta">${p.date}</p><h2>${p.title}</h2><p>${p.summary}</p><a class="btn btn-secondary" href="${route(lang, `blog/${slug}.html`)}">${t.common.readPost}<span class="sr-only">: ${p.title}</span></a></article>`;
 }
 
 function post(t, lang, slug) {
   const p = t.blog.posts[slug] || t.blog.posts[SITE.posts[0]];
-  return `${pageHero(t.blog.title, p.title, p.summary)}<section class="section"><div class="wrap page-grid"><article class="panel prose"><p class="post-meta">${p.date}</p>${p.body.map(([h,b]) => `<h2>${h}</h2><p>${b}</p>`).join("")}</article><aside class="panel"><h2>${t.blog.title}</h2>${SITE.posts.filter((s) => s !== slug).map((s) => `<p><a href="${s}.html">${t.blog.posts[s].title}</a></p>`).join("")}<a class="btn btn-secondary" href="../blog.html">${t.nav.blog}</a></aside></div></section>`;
+  return `${pageHero(t.blog.title, p.title, p.summary)}<section class="section section--tight"><div class="wrap page-grid"><article class="panel prose"><p class="post-meta">${p.date}</p>${p.body.map(([h, b]) => `<h2>${h}</h2><p>${b}</p>`).join("")}</article><aside class="panel"><h2>${t.blog.title}</h2>${SITE.posts.filter((s) => s !== slug).map((s) => `<p><a class="text-link" href="${s}.html">${t.blog.posts[s].title}</a></p>`).join("")}<a class="btn btn-secondary" href="../blog.html">${t.nav.blog}</a></aside></div></section>`;
 }
 
 function privacy(t) {
@@ -1470,37 +2186,13 @@ function terms(t) {
   return legalPage(t.common.eyebrow, t.terms);
 }
 
+function legalPage(eyebrow, data) {
+  return `${pageHero(eyebrow, data.title, data.intro)}<section class="section section--tight"><div class="wrap"><article class="panel legal">${data.updated ? `<p class="post-meta">${data.updated}</p>` : ""}${data.sections.map(([h, b]) => `<h2>${h}</h2><p>${b}</p>`).join("")}</article></div></section>`;
+}
+
 function roadmap(t) {
-  return `${pageHero(t.common.eyebrow, t.roadmap.title, t.roadmap.intro)}<section class="section"><div class="wrap timeline">${t.roadmap.groups.map(([name, items]) => `<article class="timeline-item"><span class="timeline-tag">${name}</span><ul>${items.map((x) => `<li>${x}</li>`).join("")}</ul></article>`).join("")}</div></section>`;
-}
-
-function legalPage(kicker, data) {
-  return `${pageHero(kicker, data.title, data.intro)}<section class="section"><div class="wrap"><article class="panel legal">${data.updated ? `<p class="post-meta">${data.updated}</p>` : ""}${data.sections.map(([h,b]) => `<h2>${h}</h2><p>${b}</p>`).join("")}</article></div></section>`;
-}
-
-function pageHero(kicker, title, intro) {
-  return `<section class="page-hero"><div class="wrap"><div class="eyebrow">${kicker}</div><h1>${title}</h1><p>${intro}</p></div></section>`;
-}
-
-function section(title, intro, body) {
-  return `<section class="section"><div class="wrap"><div class="section-heading"><div><div class="section-kicker">Jax Max Delta</div><h2>${title}</h2></div>${intro ? `<p>${intro}</p>` : "<span></span>"}</div>${body}</div></section>`;
-}
-
-function cards(items, linked = false) {
-  return `<div class="grid-4">${items.map(([title, body, href]) => `<article class="card"><div class="card-accent"></div><h3>${linked && href ? `<a href="${href}">${title}</a>` : title}</h3><p>${body}</p></article>`).join("")}</div>`;
-}
-
-function featureCards(items) {
-  return `<div class="grid-2">${items.map(([title, body]) => `<article class="feature-card"><div class="card-accent"></div><h3>${title}</h3><p>${body}</p></article>`).join("")}</div>`;
-}
-
-function splitSection(title, intro, items, image, alt) {
-  return `<section class="section"><div class="wrap split"><div><div class="section-kicker">Jax Max Delta</div><h2>${title}</h2><p class="lead">${intro}</p><div class="problem-list">${items.map(([a,b]) => `<article class="problem-item"><h3>${a}</h3><p>${b}</p></article>`).join("")}</div></div><div class="media-panel"><img src="${asset(image)}" alt="${alt}"></div></div></section>`;
-}
-
-function postCard(t, lang, slug) {
-  const p = t.blog.posts[slug];
-  return `<article class="post-card"><p class="post-meta">${p.date}</p><h3>${p.title}</h3><p>${p.summary}</p><a class="btn btn-secondary" href="${route(lang, `blog/${slug}.html`)}">${t.common.readPost}</a></article>`;
+  const r = t.roadmap;
+  return `${pageHero(t.common.eyebrow, r.title, r.intro)}<section class="section section--tight"><div class="wrap timeline">${r.groups.map(([name, items], i) => `<article class="timeline-item${i === 0 ? " is-current" : ""}"><h2 class="timeline-tag">${name}</h2>${list(items, i === 0 ? "tick-list tick-list--2col" : "tick-list")}</article>`).join("")}</div></section>`;
 }
 
 document.addEventListener("DOMContentLoaded", boot);

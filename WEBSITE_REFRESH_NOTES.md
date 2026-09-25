@@ -147,6 +147,24 @@ I tested the mechanism with a temporary image: it renders in the device frame
 with explicit width/height and lazy loading, and real captures keep their own
 aspect ratio.
 
+## Preview video
+
+The screenshot slots can also take a video. The Race Replay landscape slot is
+set up for it: put an MP4 in `assets/video/` and set `video` on
+`raceReplayLandscape` in `SHOTS` (see `assets/video/README.md`). The clip:
+
+- plays muted and looping only while on screen, and pauses off screen;
+- has a play/pause button, and a pause by the visitor sticks;
+- never autoplays under `prefers-reduced-motion`;
+- uses the slot's screenshot as its poster, with `preload="none"`.
+
+This was tested in headless Chrome over the DevTools protocol with a stand-in
+clip, in both normal and reduced-motion modes.
+
+Suggested content: a 25–30 s real screen recording that follows Prepare →
+Dashboard + Jax → Pit Wall → Race Replay → Session History. Use a 15–20 s
+Race Replay cut for a second App Store preview.
+
 ## App Store / TestFlight links
 
 - The old literal placeholder links (`https://testflight.apple.com/join/placeholder`,

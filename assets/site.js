@@ -33,6 +33,13 @@ const SITE = {
 // Screenshot slots. `file` is relative to assets/screenshots/current/ and may
 // also be an object per language, e.g. { en: "home-en.png", fr: "home-fr.png" }.
 // w/h default to an iPhone Pro Max capture (2868 x 1320) in the slot's orientation.
+//
+// Optional video: set `video` to an MP4 (H.264) in assets/video/, optionally
+// `videoWebm` for a WebM version, and `videoW`/`videoH` if the clip's size
+// differs from the screenshot. Like `file`, both may be per-language objects.
+// The slot's screenshot becomes the poster frame. The clip plays muted and
+// looping while on screen, has a play/pause button, and never autoplays for
+// visitors who prefer reduced motion.
 const SHOTS = {
   home:                { file: "", orientation: "landscape" },
   prepare:             { file: "", orientation: "portrait" },
@@ -43,7 +50,7 @@ const SHOTS = {
   sessionHistory:      { file: "", orientation: "portrait" },
   raceResults:         { file: "", orientation: "portrait" },
   raceReplayPortrait:  { file: "", orientation: "portrait" },
-  raceReplayLandscape: { file: "", orientation: "landscape" }
+  raceReplayLandscape: { file: "", orientation: "landscape", video: "", videoWebm: "" }
 };
 
 const copy = {
@@ -74,6 +81,8 @@ const copy = {
       ctaPrivacy: "Read the privacy policy",
       ctaReplay: "More about Race Replay",
       shotSoon: "Current screenshot coming soon",
+      videoPlay: "Play video",
+      videoPause: "Pause video",
       available: "Available now",
       disclaimer: "Jax Max Delta is an independent sim racing companion app and is not affiliated with or endorsed by EA, Codemasters, Formula 1, FIA, Microsoft, Sony, Fanatec, or any other referenced brand.",
       footerLead: "Your race engineer, your pit wall and your race memory — for F1 sim racers on iPhone and iPad.",
@@ -621,6 +630,8 @@ const copy = {
       ctaPrivacy: "Lire la politique de confidentialité",
       ctaReplay: "En savoir plus sur Race Replay",
       shotSoon: "Capture d'écran actuelle à venir",
+      videoPlay: "Lire la vidéo",
+      videoPause: "Mettre la vidéo en pause",
       available: "Disponible maintenant",
       disclaimer: "Jax Max Delta est une application compagnon de sim racing indépendante. Elle n'est pas affiliée à EA, Codemasters, Formula 1, la FIA, Microsoft, Sony, Fanatec ni à toute autre marque mentionnée, et n'est pas approuvée par celles-ci.",
       footerLead: "Votre ingénieur de course, votre mur des stands et votre mémoire de course — pour les pilotes F1 virtuels sur iPhone et iPad.",
@@ -1086,6 +1097,8 @@ const copy = {
       ctaPrivacy: "Leer la política de privacidad",
       ctaReplay: "Más sobre Race Replay",
       shotSoon: "Captura de pantalla actual próximamente",
+      videoPlay: "Reproducir vídeo",
+      videoPause: "Pausar vídeo",
       available: "Disponible ahora",
       disclaimer: "Jax Max Delta es una app independiente de sim racing y no está afiliada ni respaldada por EA, Codemasters, Formula 1, FIA, Microsoft, Sony, Fanatec ni ninguna otra marca mencionada.",
       footerLead: "Tu ingeniero de carrera, tu muro de boxes y tu memoria de carrera — para pilotos de F1 virtual en iPhone y iPad.",
@@ -1754,6 +1767,7 @@ function boot() {
   const t = copy[lang];
   root.innerHTML = `${header(t, lang, page)}<main id="main" tabindex="-1">${renderPage(t, lang, page, slug)}</main>${footer(t, lang)}`;
   setupMobileNav();
+  setupVideos(t);
 }
 
 function renderPage(t, lang, page, slug) {
@@ -1812,6 +1826,43 @@ function setupMobileNav() {
   headerNode.querySelectorAll(".nav-right a").forEach((link) => link.addEventListener("click", () => setOpen(false)));
 }
 
+// Autoplay slot videos only while visible; respect reduced motion and user pauses.
+function setupVideos(t) {
+  const videos = document.querySelectorAll("video.js-autoplay");
+  if (!videos.length) return;
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const sync = (video, button) => {
+    const playing = !video.paused;
+    button.classList.toggle("is-playing", playing);
+    button.setAttribute("aria-label", playing ? t.common.videoPause : t.common.videoPlay);
+  };
+  const tryPlay = (video) => {
+    const result = video.play();
+    if (result && result.catch) result.catch(() => {});
+  };
+  const observer = !reduceMotion && "IntersectionObserver" in window
+    ? new IntersectionObserver((entries) => entries.forEach(({ target, isIntersecting }) => {
+      if (isIntersecting && !target.dataset.userPaused) tryPlay(target);
+      else if (!isIntersecting) target.pause();
+    }), { threshold: 0.4 })
+    : null;
+  videos.forEach((video) => {
+    const button = video.parentElement.querySelector(".video-toggle");
+    video.addEventListener("play", () => sync(video, button));
+    video.addEventListener("pause", () => sync(video, button));
+    button.addEventListener("click", () => {
+      if (video.paused) {
+        delete video.dataset.userPaused;
+        tryPlay(video);
+      } else {
+        video.dataset.userPaused = "true";
+        video.pause();
+      }
+    });
+    if (observer) observer.observe(video);
+  });
+}
+
 function footer(t, lang) {
   const col = (title, items) => `<nav class="footer-col" aria-label="${title}"><h2>${title}</h2>${items.map(([key, href]) => `<a href="${route(lang, href)}">${t.nav[key]}</a>`).join("")}</nav>`;
   return `
@@ -1837,10 +1888,27 @@ function storeCta(t) {
   return `<span class="btn btn-status"><span class="status-dot" aria-hidden="true"></span>${t.common.storeSoon}</span>`;
 }
 
+function localized(value, lang) {
+  if (!value) return "";
+  return typeof value === "string" ? value : (value[lang] || value.en || "");
+}
+
 function shotFile(slot, lang) {
-  const file = slot.file;
-  if (!file) return "";
-  return typeof file === "string" ? file : (file[lang] || file.en || "");
+  return localized(slot.file, lang);
+}
+
+function shotVideo(slot, label, lang, t, w, h, poster) {
+  const mp4 = localized(slot.video, lang);
+  const webm = localized(slot.videoWebm, lang);
+  const vw = slot.videoW || w;
+  const vh = slot.videoH || h;
+  return `<div class="shot-video">
+      <video class="js-autoplay" muted loop playsinline preload="${poster ? "none" : "metadata"}" width="${vw}" height="${vh}"${poster ? ` poster="${poster}"` : ""} aria-label="${label}">
+        ${webm ? `<source src="${asset(`video/${webm}`)}" type="video/webm">` : ""}
+        <source src="${asset(`video/${mp4}`)}" type="video/mp4">
+      </video>
+      <button class="video-toggle" type="button" aria-label="${t.common.videoPlay}"><span class="video-icon" aria-hidden="true"></span></button>
+    </div>`;
 }
 
 // A framed app screenshot, or a styled placeholder until the current capture exists.
@@ -1851,10 +1919,14 @@ function shot(key, t, lang, { caption = true, eager = false } = {}) {
   const file = shotFile(slot, lang);
   const w = slot.w || (orientation === "landscape" ? 2868 : 1320);
   const h = slot.h || (orientation === "landscape" ? 1320 : 2868);
-  const body = file
+  const hasVideo = Boolean(localized(slot.video, lang));
+  const poster = file ? asset(`screenshots/current/${file}`) : "";
+  const body = hasVideo
+    ? shotVideo(slot, label, lang, t, w, h, poster)
+    : file
     ? `<img src="${asset(`screenshots/current/${file}`)}" width="${w}" height="${h}" alt="${label}" ${eager ? "" : 'loading="lazy" '}decoding="async">`
     : `<div class="shot-empty" role="img" aria-label="${label} - ${t.common.shotSoon}"><span class="shot-empty-title">${label}</span><span class="shot-empty-note">${t.common.shotSoon}</span></div>`;
-  return `<figure class="shot shot--${orientation}${file ? "" : " is-empty"}"><div class="shot-frame">${body}</div>${caption ? `<figcaption>${label}</figcaption>` : ""}</figure>`;
+  return `<figure class="shot shot--${orientation}${file || hasVideo ? "" : " is-empty"}"><div class="shot-frame">${body}</div>${caption ? `<figcaption>${label}</figcaption>` : ""}</figure>`;
 }
 
 function list(items, cls = "tick-list") {

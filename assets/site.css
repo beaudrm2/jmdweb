@@ -533,6 +533,39 @@ main:focus { outline: none; }
   box-shadow: var(--shadow);
 }
 .shot-frame img { width: 100%; border-radius: 14px; }
+.shot-video { position: relative; }
+.shot-video video { display: block; width: 100%; height: auto; border-radius: 14px; background: #0a0b0f; }
+.video-toggle {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  color: #fff;
+  background: rgba(7, 8, 11, 0.72);
+  cursor: pointer;
+}
+.video-toggle:hover { background: rgba(7, 8, 11, 0.9); }
+.video-icon {
+  width: 0;
+  height: 0;
+  margin-left: 3px;
+  border-style: solid;
+  border-width: 7px 0 7px 12px;
+  border-color: transparent transparent transparent currentColor;
+}
+.video-toggle.is-playing .video-icon {
+  width: 12px;
+  height: 14px;
+  margin-left: 0;
+  border: 0;
+  border-left: 4px solid currentColor;
+  border-right: 4px solid currentColor;
+}
 /* Real captures keep their own proportions (width/height attributes); placeholders use iPhone ratios. */
 .shot--landscape .shot-empty { aspect-ratio: 2868 / 1320; }
 .shot--portrait .shot-empty { aspect-ratio: 1320 / 2868; }

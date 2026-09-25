@@ -24,3 +24,5 @@ the right space. A slot can also take one file per language:
 
 Keep each file reasonably small (under ~400 KB): PNG from the device, or a
 high-quality JPEG/WebP export.
+
+To swap a slot for a looping preview video, see `assets/video/README.md`.

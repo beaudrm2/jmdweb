@@ -1,23 +1,29 @@
 # Jax Max Delta — Privacy Policy
 
-This is the source text for the policy hosted and linked by the app. Publication
-readiness, placeholder completion, and store verification are tracked by Project
-item `BIZ-01` in [GitHub Project 3](https://github.com/users/beaudrm2/projects/3/views/5).
+> **Legal review required:** this source reflects substantive October 24, 2026
+> revisions and must be approved before it is represented as final legal advice.
 
-**Effective date:** August 17, 2026
+**Original effective date:** August 17, 2026
 
-Jax Max Delta ("the app") is developed and published by Marc Beaudry, operating as Camilore ("we", "us").
+**Last updated:** October 24, 2026
+
+Jax Max Delta ("the app") is a product owned and operated by Camilore Inc.
+("Camilore", "we", "us"). Subject to completion of the applicable transfer
+documentation, Camilore Inc. assumed ownership and operation on October 1, 2026.
 This policy explains what the app does with your information. It is written to be read,
 not to be survived.
 
 ## 1. The short version
 
-- Jax Max Delta has **no user accounts** and asks you for **no personal information**.
+- Jax Max Delta has **no user accounts**. You may optionally enter a name for Jax
+  to call you; it is stored locally with your app preferences.
 - Your telemetry, lap data, session history and car setups are stored **on your device**.
-- We do not sell, rent or share your data, and we do not use it for advertising.
-- Three things leave your device: **crash diagnostics**, **purchase transactions**, and —
-  only if your device has iCloud available — a **backup of your session history into
-  your own private iCloud container**, which we cannot read.
+- We do not sell or rent your data, and we do not use it for advertising. Limited
+  third-party processing is described below.
+- Information leaves your device only through **crash diagnostics**, **purchase and
+  subscription processing**, support messages or exports you initiate, and — only if
+  your device has iCloud available — a **backup of your session history in your own
+  private iCloud container**, which Camilore cannot read.
 - You can delete everything at any time from inside the app, or by deleting the app.
 
 ## 2. What the app receives from your game
@@ -41,7 +47,8 @@ The following stay in the app's private storage on your device:
 - lap traces (throttle, brake, steering, speed, gear, ERS, DRS samples);
 - car setups captured from your sessions, and your ratings of them;
 - your app preferences: connection host and port, game selection, language, units,
-  Jax voice and coaching settings, data-retention setting.
+  the optional name you ask Jax to use, Jax voice and audio-guidance settings,
+  and the data-retention setting.
 
 You control how long the heavier data is kept through **Settings → SUPPORT** (data
 capture and retention), and you can delete individual sessions or all of them at any
@@ -99,18 +106,20 @@ goes wherever you send it, and it does not pass through us.
 
 ### 4.5 Support messages
 
-If you contact support, we receive only what you choose to send us — typically your
-email address, device model, app version and a description of the issue. We use it to
-answer you and to fix the problem, and for nothing else.
+If you contact `support@jaxmaxdelta.com`, Camilore receives only what you choose to
+send — typically your email address, device model, app version and a description of
+the issue. We use it to answer you, troubleshoot, keep support records and improve the
+product. Do not send raw telemetry or sensitive files unless support requests them and
+you are comfortable sharing them.
 
 ## 5. What we do not do
 
-- No accounts, no sign-up, no email collection.
+- No in-app accounts, sign-up or automatic email collection.
 - No advertising, no ad identifiers, no IDFA, no ad networks.
 - No cross-app or cross-site tracking, and no App Tracking Transparency prompt, because
   we do not track.
 - No product analytics or behavioural telemetry sent to us.
-- No selling, renting or sharing of your data with third parties.
+- No selling or renting your data.
 - No location collection. The app does not request location access.
 - No contacts, photos, microphone or camera access.
 
@@ -138,45 +147,38 @@ decision-making that produces legal effects.
 
 ## 8. Your rights
 
-Because we hold no account and no directory of users, most of your data is under your
-direct control: you can see it, export it and delete it inside the app. For the limited
-data our processors hold (crash diagnostics, purchase status), you can contact us at
-`support@jaxmaxdelta.com` and we will help you exercise your rights of access,
-correction, deletion, restriction, objection and portability where they apply. If you
-are in the EEA or UK you also have the right to complain to your data-protection
-authority.
-
-California residents: we do not sell or share personal information as those terms are
-defined by the CCPA/CPRA, and we do not offer financial incentives for data.
+Depending on where you live, including in Canada or Quebec, applicable privacy law may
+give you rights concerning access, correction, deletion, withdrawal of consent, data
+portability or complaints to a privacy regulator. These rights are not absolute and
+depend on the information and law involved. Most JMD data is under your direct control
+in the app. For questions or requests involving support records, diagnostics or
+purchase status, contact `support@jaxmaxdelta.com`. We may need enough information to
+verify and respond to a request without creating a user account.
 
 ## 9. Children
 
-Jax Max Delta is rated 4+ and is safe for general audiences, but it is designed for sim
-racers and is not directed at children. We do not knowingly collect personal
-information from children. If you believe a child has provided us personal information,
-contact us and we will delete it.
+Jax Max Delta is rated 4+ in the App Store and is designed for sim racers, but it is not
+directed specifically to children. We do not knowingly solicit personal information
+from children. If you believe a child sent personal information to support, contact us
+so we can review and address it.
 
-## 10. Android `[PARKED — not applicable to the iOS release]`
+## 10. International processing
 
-When Jax Max Delta ships on Android, session data will be stored on the device in the
-same way, and Android's own backup mechanism (Android Auto Backup / Backup by Google
-One) may include app data in the user's Google account backup, under Google's terms and
-outside our access. This section takes effect only when an Android version is published.
+Apple, Google and RevenueCat provide services internationally and may process limited
+purchase or diagnostic information outside your province, state or country under their
+own terms and privacy practices. Review the linked provider notices for current details;
+Camilore does not claim a processing location that those providers have not verified.
 
-## 11. International transfers
+## 11. Changes to this policy
 
-Our processors (Apple, Google, RevenueCat) operate globally and may process data in the
-United States and elsewhere, under their own published safeguards and standard
-contractual clauses.
+If this policy changes, we will update the last-updated date and publish the revised
+version at this address. We will not backdate a revision. Material app-facing changes
+may also be described in release notes.
 
-## 12. Changes to this policy
+## 12. Contact
 
-If this policy changes, we will update the effective date at the top and publish the
-new version at this address. Material changes will also be noted in the app's release
-notes.
+Camilore Inc. is responsible for Jax Max Delta.
 
-## 13. Contact
+Privacy and support inquiries: support@jaxmaxdelta.com
 
-Marc Beaudry, operating as Camilore
-47 rue de l'Etoile, Gatineau, Quebec, Canada, J9A 2X5
-Email: support@jaxmaxdelta.com
+Corporate website: https://camilore.com

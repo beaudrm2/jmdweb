@@ -1,5 +1,9 @@
 # Website refresh notes — JMD R1 / App Store launch
 
+> Historical implementation notes. Corporate ownership, legal drafting, support,
+> App Store verification and deployment-transfer status as of October 24, 2026 are
+> maintained in [`docs/CAMILORE_OWNERSHIP_MIGRATION.md`](docs/CAMILORE_OWNERSHIP_MIGRATION.md).
+
 Refresh of jaxmaxdelta.com so it represents the current R1 app. The site is
 still plain static HTML/CSS/JS on GitHub Pages (`CNAME` unchanged), with no
 framework and no build step.
@@ -181,27 +185,13 @@ Race Replay cut for a second App Store preview.
   point.
 - The site shows no pricing.
 
-## Legal and business text deliberately left untouched
+## Legal and business text
 
-- The Privacy Policy text (EN/FR/ES) is byte-for-byte identical to before,
-  including the effective date, Camilore/Marc Beaudry identification, address,
-  RevenueCat, Crashlytics, iCloud container, exports, deletion,
-  no-tracking and Android sections. `privacy-policy.md` is unchanged.
-- The Terms of Use text is unchanged.
-- No legal entity was added or renamed. The site says "Camilore" only where it
-  already did; there is no "Inc." and no new copyright line.
-- Items for Marc or legal to review, **not changed**:
-  1. Terms, "Early access and placeholders": still says some links may be
-     placeholders during early access. That becomes stale at public launch.
-  2. The FR/ES privacy text points to *Réglages/Ajustes → SUPPORT*, but the
-     app's FR/ES tab is **ASSISTANCE** / **SOPORTE**.
-  3. The FR/ES privacy and terms text (and the FR/ES blog posts) have no
-     accents (e.g. "confidentialite", "telemetrie"). Worth correcting in a
-     reviewed legal pass.
-  4. `privacy-policy.md` in the site root is published by GitHub Pages. So is
-     this notes file, at `/WEBSITE_REFRESH_NOTES.html`, because Pages runs
-     Jekyll. Nothing sensitive is in it, but move it or exclude it via
-     `_config.yml` if you'd rather it not be public.
+This section is superseded by the October 24, 2026 ownership migration. The
+site now identifies Camilore Inc., routes all JMD inquiries to
+`support@jaxmaxdelta.com`, displays corporate copyright/product attribution,
+and contains expanded Privacy and Terms drafts visibly marked for legal review.
+See `docs/CAMILORE_OWNERSHIP_MIGRATION.md` for the current audit and approvals.
 
 ## Verification performed
 
